@@ -4,6 +4,8 @@ import React from 'react'
 import { create } from 'zustand'
 import { OrbitalNode } from '@/lib/nodes'
 
+export type ViewMode = 'globe' | 'orbital'
+
 interface SceneState {
   activeNode: OrbitalNode | null
   setActiveNode: (node: OrbitalNode | null) => void
@@ -13,6 +15,8 @@ interface SceneState {
   setActiveNodeWorldPos: (pos: [number, number, number]) => void
   isLoaded: boolean
   setIsLoaded: (v: boolean) => void
+  viewMode: ViewMode
+  setViewMode: (mode: ViewMode) => void
 }
 
 export const useSceneStore = create<SceneState>()((set) => ({
@@ -23,7 +27,9 @@ export const useSceneStore = create<SceneState>()((set) => ({
   activeNodeWorldPos: [0, 0, 0],
   setActiveNodeWorldPos: (pos) => set({ activeNodeWorldPos: pos }),
   isLoaded: false,
-  setIsLoaded: (v) => set({ isLoaded: v })
+  setIsLoaded: (v) => set({ isLoaded: v }),
+  viewMode: 'globe',
+  setViewMode: (mode) => set({ viewMode: mode })
 }))
 
 export default function SceneStateProvider({ children }: { children: React.ReactNode }) {

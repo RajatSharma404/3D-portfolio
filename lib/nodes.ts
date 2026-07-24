@@ -10,6 +10,19 @@ export interface OrbitalNode {
   orbitOffset: number
   inclination: number
   geometry: 'icosahedron' | 'octahedron' | 'tetrahedron' | 'dodecahedron' | 'torus'
+  lat: number
+  lng: number
+  city: string
+  country: string
+}
+
+export interface GlobeArc {
+  startLat: number
+  startLng: number
+  endLat: number
+  endLng: number
+  color: [string, string]
+  label: string
 }
 
 export const NODES: OrbitalNode[] = [
@@ -24,7 +37,11 @@ export const NODES: OrbitalNode[] = [
     orbitOffset: 0,
     inclination: 0.22,
     geometry: 'icosahedron',
-    url: 'https://github.com/RajatSharma404/flow'
+    url: 'https://github.com/RajatSharma404/flow',
+    lat: 37.7749,
+    lng: -122.4194,
+    city: 'San Francisco',
+    country: 'USA'
   },
   {
     id: 'mastermind',
@@ -37,7 +54,11 @@ export const NODES: OrbitalNode[] = [
     orbitOffset: 1.2,
     inclination: 0.55,
     geometry: 'octahedron',
-    url: 'https://github.com/RajatSharma404/mastermind'
+    url: 'https://github.com/RajatSharma404/mastermind',
+    lat: 51.5074,
+    lng: -0.1278,
+    city: 'London',
+    country: 'UK'
   },
   {
     id: 'mocktest365',
@@ -50,7 +71,11 @@ export const NODES: OrbitalNode[] = [
     orbitOffset: 2.5,
     inclination: -0.35,
     geometry: 'dodecahedron',
-    url: 'https://github.com/RajatSharma404/mocktest365'
+    url: 'https://github.com/RajatSharma404/mocktest365',
+    lat: 12.9716,
+    lng: 77.5946,
+    city: 'Bengaluru',
+    country: 'India'
   },
   {
     id: 'dsa-city',
@@ -63,7 +88,11 @@ export const NODES: OrbitalNode[] = [
     orbitOffset: 3.9,
     inclination: 0.72,
     geometry: 'tetrahedron',
-    url: 'https://github.com/RajatSharma404/dsa-city'
+    url: 'https://github.com/RajatSharma404/dsa-city',
+    lat: 35.6762,
+    lng: 139.6503,
+    city: 'Tokyo',
+    country: 'Japan'
   },
   {
     id: 'dsa-tracker',
@@ -76,7 +105,11 @@ export const NODES: OrbitalNode[] = [
     orbitOffset: 0.8,
     inclination: -0.6,
     geometry: 'icosahedron',
-    url: 'https://github.com/RajatSharma404/dsa-tracker-pro'
+    url: 'https://github.com/RajatSharma404/dsa-tracker-pro',
+    lat: 40.7128,
+    lng: -74.0060,
+    city: 'New York',
+    country: 'USA'
   },
   {
     id: 'countries-quiz',
@@ -89,7 +122,11 @@ export const NODES: OrbitalNode[] = [
     orbitOffset: 5.1,
     inclination: 0.15,
     geometry: 'torus',
-    url: 'https://github.com/RajatSharma404/countries-quiz'
+    url: 'https://github.com/RajatSharma404/countries-quiz',
+    lat: 46.2044,
+    lng: 6.1432,
+    city: 'Geneva',
+    country: 'Switzerland'
   },
   {
     id: 'body-planner',
@@ -102,6 +139,62 @@ export const NODES: OrbitalNode[] = [
     orbitOffset: 2.0,
     inclination: -0.18,
     geometry: 'octahedron',
-    url: 'https://github.com/RajatSharma404/body-planner'
+    url: 'https://github.com/RajatSharma404/body-planner',
+    lat: -33.8688,
+    lng: 151.2093,
+    city: 'Sydney',
+    country: 'Australia'
   }
 ]
+
+export const GLOBE_ARCS: GlobeArc[] = [
+  {
+    startLat: 12.9716,
+    startLng: 77.5946,
+    endLat: 37.7749,
+    endLng: -122.4194,
+    color: ['#00f2fe', '#4facfe'],
+    label: 'Bengaluru → San Francisco'
+  },
+  {
+    startLat: 12.9716,
+    startLng: 77.5946,
+    endLat: 51.5074,
+    endLng: -0.1278,
+    color: ['#00f2fe', '#00c6ff'],
+    label: 'Bengaluru → London'
+  },
+  {
+    startLat: 37.7749,
+    startLng: -122.4194,
+    endLat: 40.7128,
+    endLng: -74.0060,
+    color: ['#4facfe', '#00f2fe'],
+    label: 'San Francisco → New York'
+  },
+  {
+    startLat: 40.7128,
+    startLng: -74.0060,
+    endLat: 46.2044,
+    endLng: 6.1432,
+    color: ['#00f2fe', '#38bdf8'],
+    label: 'New York → Geneva'
+  },
+  {
+    startLat: 51.5074,
+    startLng: -0.1278,
+    endLat: 35.6762,
+    endLng: 139.6503,
+    color: ['#38bdf8', '#00f2fe'],
+    label: 'London → Tokyo'
+  },
+  {
+    startLat: 35.6762,
+    startLng: 139.6503,
+    endLat: -33.8688,
+    endLng: 151.2093,
+    color: ['#00f2fe', '#4facfe'],
+    label: 'Tokyo → Sydney'
+  }
+]
+
