@@ -2,7 +2,6 @@
 
 import { Suspense } from 'react'
 import dynamic from 'next/dynamic'
-import { useSceneStore } from '@/components/providers/SceneStateProvider'
 
 const SceneStateProvider = dynamic(
   () => import('@/components/providers/SceneStateProvider'),
@@ -10,14 +9,6 @@ const SceneStateProvider = dynamic(
 )
 const InteractiveGlobe = dynamic(
   () => import('@/components/scene/InteractiveGlobe'),
-  { ssr: false }
-)
-const OrbitalScene = dynamic(
-  () => import('@/components/scene/OrbitalScene'),
-  { ssr: false }
-)
-const ViewToggle = dynamic(
-  () => import('@/components/ui/ViewToggle'),
   { ssr: false }
 )
 const NodePanel = dynamic(
@@ -41,29 +32,19 @@ const ContactLink = dynamic(
   { ssr: false }
 )
 
-function SceneContent() {
-  const viewMode = useSceneStore((state) => state.viewMode)
-
-  return (
-    <>
-      {viewMode === 'globe' ? <InteractiveGlobe /> : <OrbitalScene />}
-      <ViewToggle />
-      <NameTag />
-      <NavDots />
-      <ContactLink />
-      <NodePanel />
-      <LoadingScreen />
-    </>
-  )
-}
-
 export default function AppShell() {
   return (
     <Suspense fallback={null}>
       <SceneStateProvider>
-        <SceneContent />
+        <InteractiveGlobe />
+        <NameTag />
+        <NavDots />
+        <ContactLink />
+        <NodePanel />
+        <LoadingScreen />
       </SceneStateProvider>
     </Suspense>
   )
 }
+
 
