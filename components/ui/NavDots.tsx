@@ -1,0 +1,63 @@
+'use client'
+
+import { useEffect, useRef } from 'react'
+import gsap from 'gsap'
+import { NODES } from '@/lib/nodes'
+import { useSceneStore } from '@/components/providers/SceneStateProvider'
+
+export default function NavDots() {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const activeNode = useSceneStore((state) => state.activeNode)
+  const setActiveNode = useSceneStore((state) => state.setActiveNode)
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const dots = containerRef.current.children
+      gsap.fromTo(
+        dots,
+        { opacity: 0, scale: 0 },
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.4,
+          stagger: 0.08,
+          delay: 1.8,
+          ease: 'back.out(1.7)'
+        }
+      )
+    }
+  }, [])
+
+  useEffect(() => {
+    if (containerRef.current) {
+      gsap.to(containerRef.current, {
+        opacity: activeNode ? 0 : 1,
+        pointerEvents: activeNode ? 'none' : 'auto',
+        duration: 0.3
+      })
+    }
+  }, [activeNode])
+
+  return (
+    <div
+      ref={containerRef}
+      className="absolute right-6 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-3 items-center pointer-events-auto"
+    >
+      {NODES.map((node) => {
+        const isActive = activeNode?.id === node.id
+        return (
+          <button
+            key={node.id}
+            onClick={() => setActiveNode(node)}
+            title={node.label}
+            className={`rounded-full transition-all duration-300 ${
+              isActive
+                ? 'w-2.5 h-2.5 bg-white shadow-[0_0_8px_#c8f0ff]'
+                : 'w-1.5 h-1.5 bg-white/20 hover:bg-white/60'
+            }`}
+          />
+        )
+      })}
+    </div>
+  )
+}

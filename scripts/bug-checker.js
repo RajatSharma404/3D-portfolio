@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Bug & Code Quality Auditor Script for 3D Portfolio
+ * Bug & Code Quality Auditor Script for 3D Orbital Portfolio
  * Usage: node scripts/bug-checker.js
  */
 
@@ -33,8 +33,8 @@ function auditNodesData() {
 
   const content = fs.readFileSync(nodesPath, 'utf8');
 
-  // Verify node structure rules
-  const requiredFields = ['id', 'label', 'category', 'continentName', 'continentCode', 'lat', 'lon', 'lng', 'accentColor', 'tech'];
+  // Verify orbital node structure rules
+  const requiredFields = ['id', 'label', 'type', 'description', 'tech', 'orbitRadius', 'orbitSpeed', 'orbitOffset', 'inclination', 'geometry'];
   requiredFields.forEach((field) => {
     if (!content.includes(`${field}:`)) {
       logIssue('WARNING', nodesPath, 0, `Property '${field}' might be missing from some nodes in lib/nodes.ts.`);
