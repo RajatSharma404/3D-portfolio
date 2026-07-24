@@ -1,0 +1,48 @@
+{
+  "name": "3d-portfolio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "audit:bugs": "node scripts/bug-checker.js",
+    "audit:clean": "node scripts/redundant-cleaner.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.1.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@types/three": "^0.185.1",
+    "autoprefixer": "^10.5.4",
+    "postcss": "^8.5.21",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "@fontsource/space-grotesk": "^5.3.0",
+    "@fontsource/space-mono": "^5.3.0",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
+    "@react-three/postprocessing": "^3.0.4",
+    "cobe": "^2.0.1",
+    "gsap": "^3.15.0",
+    "leva": "^0.10.1",
+    "next": "^16.2.10",
+    "postprocessing": "^6.39.3",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-globe.gl": "^2.38.0",
+    "three": "^0.185.1",
+    "zustand": "^5.0.14"
+  }
+}
