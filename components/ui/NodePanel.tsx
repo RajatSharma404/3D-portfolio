@@ -51,10 +51,17 @@ export default function NodePanel() {
           </button>
         </div>
 
-        {/* Project Title */}
-        <h2 className="text-2xl font-medium text-white mb-4 tracking-tight">
+        {/* Project Title & Continent */}
+        <h2 className="text-2xl font-medium text-white mb-2 tracking-tight">
           {activeNode?.label}
         </h2>
+        {activeNode?.continent && (
+          <div className="flex items-center gap-2 mb-4 font-mono text-xs text-cyan-400">
+            <span>🌐 {activeNode.continent}</span>
+            <span>•</span>
+            <span>{activeNode.city}, {activeNode.country}</span>
+          </div>
+        )}
 
         <div className="h-[1px] w-full bg-white/10 my-6" />
 

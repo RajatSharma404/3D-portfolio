@@ -23,6 +23,10 @@ const NavDots = dynamic(
   () => import('@/components/ui/NavDots'),
   { ssr: false }
 )
+const ContinentBar = dynamic(
+  () => import('@/components/ui/ContinentBar'),
+  { ssr: false }
+)
 const LoadingScreen = dynamic(
   () => import('@/components/ui/LoadingScreen'),
   { ssr: false }
@@ -39,6 +43,7 @@ export default function AppShell() {
         <InteractiveGlobe />
         <NameTag />
         <NavDots />
+        <ContinentBar />
         <ContactLink />
         <NodePanel />
         <LoadingScreen />
@@ -46,5 +51,3 @@ export default function AppShell() {
     </Suspense>
   )
 }
-
-

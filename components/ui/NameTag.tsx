@@ -5,19 +5,13 @@ import gsap from 'gsap'
 
 export default function NameTag() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const lineRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (containerRef.current && lineRef.current) {
+    if (containerRef.current) {
       gsap.fromTo(
         containerRef.current,
         { opacity: 0, y: -12 },
-        { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out', delay: 1.6 }
-      )
-      gsap.fromTo(
-        lineRef.current,
-        { width: 0 },
-        { width: 24, duration: 0.5, ease: 'power2.out', delay: 2.0 }
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out', delay: 1.2 }
       )
     }
   }, [])
@@ -25,18 +19,31 @@ export default function NameTag() {
   return (
     <div
       ref={containerRef}
-      className="absolute top-8 left-8 z-40 select-none pointer-events-auto"
+      className="absolute top-6 left-6 z-40 select-none pointer-events-auto flex flex-col gap-2"
     >
-      <p className="font-mono text-[11px] tracking-[0.2em] text-white/90 uppercase m-0">
-        Rajat Sharma
-      </p>
-      <p className="text-[13px] text-white/40 mt-1 font-normal m-0">
-        Software Engineer · Sparqor
-      </p>
-      <div
-        ref={lineRef}
-        className="h-[1px] bg-[var(--color-accent)] mt-2.5 rounded-full"
-      />
+      {/* Availability Status Badge */}
+      <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 w-fit backdrop-blur-sm">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
+        <span className="font-mono text-[9px] tracking-[0.2em] text-emerald-400 uppercase font-bold">
+          Available For Projects
+        </span>
+      </div>
+
+      {/* Main Name & Title */}
+      <div>
+        <h1 className="font-mono text-sm tracking-[0.25em] text-white uppercase font-bold m-0">
+          Rajat Sharma
+        </h1>
+        <p className="text-xs text-white/50 mt-0.5 font-normal tracking-wide m-0">
+          Interactive 3D Earth Portfolio
+        </p>
+      </div>
+
+      {/* Interactive Guidance Hint */}
+      <div className="flex items-center gap-2 text-[11px] text-cyan-400/80 font-mono mt-1">
+        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#38bdf8]" />
+        <span>Click a continent to explore projects · Drag to rotate</span>
+      </div>
     </div>
   )
 }

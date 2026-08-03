@@ -29,29 +29,45 @@ export default function InteractiveGlobe() {
     return () => window.removeEventListener('resize', updateSize)
   }, [])
 
-  // Configure initial globe controls & auto-rotation
+  // Configure initial globe controls & position
   useEffect(() => {
     if (globeRef.current) {
       const controls = globeRef.current.controls()
       if (controls) {
-        controls.autoRotate = !activeNode
-        controls.autoRotateSpeed = 0.8
+        controls.autoRotate = false
+        controls.autoRotateSpeed = 0.3
         controls.enableZoom = true
       }
+      globeRef.current.pointOfView({ lat: -15, lng: 130, altitude: 2.1 }, 0)
     }
-  }, [activeNode])
+  }, [])
 
-  // Fly to active node position when selected
+  // Fly to active node position when selected, or reset to initial view when null
   useEffect(() => {
-    if (globeRef.current && activeNode) {
-      globeRef.current.pointOfView(
-        {
-          lat: activeNode.lat,
-          lng: activeNode.lng,
-          altitude: 1.8
-        },
-        1400
-      )
+    if (globeRef.current) {
+      const controls = globeRef.current.controls()
+      if (controls) {
+        controls.autoRotate = false
+      }
+      if (activeNode) {
+        globeRef.current.pointOfView(
+          {
+            lat: activeNode.lat,
+            lng: activeNode.lng,
+            altitude: 1.8
+          },
+          1400
+        )
+      } else {
+        globeRef.current.pointOfView(
+          {
+            lat: -15,
+            lng: 130,
+            altitude: 2.1
+          },
+          1200
+        )
+      }
     }
   }, [activeNode])
 
@@ -60,74 +76,91 @@ export default function InteractiveGlobe() {
     setActiveNode(node)
   }
 
-  const handleLabelClick = (label: object) => {
-    const node = label as OrbitalNode
-    setActiveNode(node)
-  }
-
   return (
-    <div ref={containerRef} className="absolute inset-0 w-full h-full bg-[#050508] overflow-hidden">
+    <div ref={containerRef} className="absolute inset-0 w-full h-full bg-[#030712] overflow-hidden">
       <Globe
         ref={globeRef}
         width={dimensions.width}
         height={dimensions.height}
-        backgroundColor="rgba(5, 5, 8, 1)"
-        globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
+        backgroundColor="rgba(0, 0, 0, 0)"
+        backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
+        globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
         bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
         atmosphereColor="#38bdf8"
-        atmosphereAltitude={0.18}
+        atmosphereAltitude={0.15}
+        showAtmosphere={true}
         
-        // Arc configuration
+        // Arc configuration (subtle connecting trajectories)
         arcsData={GLOBE_ARCS}
         arcColor="color"
         arcDashLength={0.4}
         arcDashGap={0.2}
-        arcDashAnimateTime={1600}
-        arcAltitude={0.18}
-        arcStroke={1.2}
+        arcDashAnimateTime={2000}
+        arcAltitude={0.14}
+        arcStroke={0.8}
 
         // Point markers for project nodes
         pointsData={NODES}
         pointLat="lat"
         pointLng="lng"
         pointColor={(d: object) =>
-          (d as OrbitalNode).id === activeNode?.id ? '#ffffff' : '#00f2fe'
+          (d as OrbitalNode).id === activeNode?.id ? '#ffffff' : '#38bdf8'
         }
-        pointAltitude={0.04}
+        pointAltitude={0.03}
         pointRadius={(d: object) =>
-          (d as OrbitalNode).id === activeNode?.id ? 0.9 : 0.6
+          (d as OrbitalNode).id === activeNode?.id ? 0.7 : 0.45
         }
         pointsMerge={false}
         onPointClick={handlePointClick}
         onPointHover={(point) => setHoveredNode(point ? (point as OrbitalNode) : null)}
 
-        // Pulsing rings around nodes
+        // Pulsing rings around active nodes
         ringsData={activeNode ? [activeNode] : NODES}
         ringLat="lat"
         ringLng="lng"
-        ringColor={() => (t: number) => `rgba(0, 242, 254, ${Math.max(0, 1 - t)})`}
-        ringMaxRadius={8}
-        ringPropagationSpeed={3}
-        ringRepeatPeriod={1200}
+        ringColor={() => (t: number) => `rgba(56, 189, 248, ${Math.max(0, 1 - t) * 0.7})`}
+        ringMaxRadius={6}
+        ringPropagationSpeed={2.5}
+        ringRepeatPeriod={1400}
 
-        // Floating interactive labels
-        labelsData={NODES}
-        labelLat="lat"
-        labelLng="lng"
-        labelText={(d: object) => {
-          const n = d as OrbitalNode
-          return `✦ ${n.label} (${n.city})`
+        // Custom HTML Badge Cards for Project Nodes matching Reference UI
+        htmlElementsData={NODES}
+        htmlLat="lat"
+        htmlLng="lng"
+        htmlAltitude={0.04}
+        htmlTransitionDuration={1000}
+        htmlElement={(d: object) => {
+          const node = d as OrbitalNode
+          const isActive = activeNode?.id === node.id
+
+          const el = document.createElement('div')
+          el.className = `group cursor-pointer select-none flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-[#080d19]/90 backdrop-blur-md border ${
+            isActive
+              ? 'border-cyan-400 shadow-[0_0_20px_rgba(56,189,248,0.6)] scale-105'
+              : 'border-cyan-500/30 hover:border-cyan-400/80 hover:shadow-[0_0_15px_rgba(56,189,248,0.3)] shadow-lg'
+          } transition-all duration-300 transform -translate-x-1/2 -translate-y-1/2`
+
+          const continentUpper = node.continent.toUpperCase()
+
+          el.innerHTML = `
+            <div class="w-5 h-5 rounded-md bg-[#0f172a] border border-cyan-500/40 flex items-center justify-center shadow-inner group-hover:border-cyan-400 transition-colors">
+              <span class="w-2 h-2 rounded-sm bg-cyan-400 shadow-[0_0_6px_#38bdf8] group-hover:scale-125 transition-transform"></span>
+            </div>
+            <div class="flex flex-col text-left">
+              <span class="text-[8px] font-mono tracking-widest text-cyan-400 font-semibold leading-none mb-0.5">${continentUpper}</span>
+              <span class="text-[11px] font-bold text-white tracking-wide leading-tight group-hover:text-cyan-100">${node.label}</span>
+            </div>
+          `
+
+          el.onclick = (e) => {
+            e.stopPropagation()
+            setActiveNode(node)
+          }
+          el.onmouseenter = () => setHoveredNode(node)
+          el.onmouseleave = () => setHoveredNode(null)
+
+          return el
         }}
-        labelSize={(d: object) =>
-          (d as OrbitalNode).id === activeNode?.id ? 1.6 : 1.2
-        }
-        labelDotRadius={0.4}
-        labelColor={(d: object) =>
-          (d as OrbitalNode).id === activeNode?.id ? '#ffffff' : '#38bdf8'
-        }
-        labelResolution={2}
-        onLabelClick={handleLabelClick}
-        onLabelHover={(label) => setHoveredNode(label ? (label as OrbitalNode) : null)}
       />
     </div>
   )
