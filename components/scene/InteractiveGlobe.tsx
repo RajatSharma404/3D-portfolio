@@ -34,8 +34,8 @@ export default function InteractiveGlobe() {
     if (globeRef.current) {
       const controls = globeRef.current.controls()
       if (controls) {
-        controls.autoRotate = false
-        controls.autoRotateSpeed = 0.3
+        controls.autoRotate = true
+        controls.autoRotateSpeed = 0.35
         controls.enableZoom = true
       }
       globeRef.current.pointOfView({ lat: -15, lng: 130, altitude: 2.1 }, 0)
@@ -47,7 +47,8 @@ export default function InteractiveGlobe() {
     if (globeRef.current) {
       const controls = globeRef.current.controls()
       if (controls) {
-        controls.autoRotate = false
+        controls.autoRotate = !activeNode
+        controls.autoRotateSpeed = 0.35
       }
       if (activeNode) {
         globeRef.current.pointOfView(
