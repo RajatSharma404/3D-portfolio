@@ -103,7 +103,7 @@ export default function InteractiveGlobe() {
     if (globeRef.current) {
       const controls = globeRef.current.controls()
       if (controls) {
-        controls.autoRotate = !activeNode && !isZoomedOut
+        controls.autoRotate = !activeNode
         controls.autoRotateSpeed = 0.75
       }
       if (activeNode) {
