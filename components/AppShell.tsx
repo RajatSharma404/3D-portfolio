@@ -2,37 +2,16 @@
 
 import { Suspense } from 'react'
 import dynamic from 'next/dynamic'
+import SceneStateProvider from '@/components/providers/SceneStateProvider'
+import NodePanel from '@/components/ui/NodePanel'
+import NameTag from '@/components/ui/NameTag'
+import NavDots from '@/components/ui/NavDots'
+import ContinentBar from '@/components/ui/ContinentBar'
+import LoadingScreen from '@/components/ui/LoadingScreen'
+import ContactLink from '@/components/ui/ContactLink'
 
-const SceneStateProvider = dynamic(
-  () => import('@/components/providers/SceneStateProvider'),
-  { ssr: false }
-)
 const InteractiveGlobe = dynamic(
   () => import('@/components/scene/InteractiveGlobe'),
-  { ssr: false }
-)
-const NodePanel = dynamic(
-  () => import('@/components/ui/NodePanel'),
-  { ssr: false }
-)
-const NameTag = dynamic(
-  () => import('@/components/ui/NameTag'),
-  { ssr: false }
-)
-const NavDots = dynamic(
-  () => import('@/components/ui/NavDots'),
-  { ssr: false }
-)
-const ContinentBar = dynamic(
-  () => import('@/components/ui/ContinentBar'),
-  { ssr: false }
-)
-const LoadingScreen = dynamic(
-  () => import('@/components/ui/LoadingScreen'),
-  { ssr: false }
-)
-const ContactLink = dynamic(
-  () => import('@/components/ui/ContactLink'),
   { ssr: false }
 )
 

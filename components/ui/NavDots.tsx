@@ -50,6 +50,8 @@ export default function NavDots() {
             key={node.id}
             onClick={() => setActiveNode(node)}
             title={node.label}
+            aria-label={`Jump to ${node.label} project`}
+            aria-current={isActive ? 'true' : undefined}
             className={`rounded-full transition-all duration-300 ${
               isActive
                 ? 'w-2.5 h-2.5 bg-white shadow-[0_0_8px_#c8f0ff]'

@@ -83,9 +83,9 @@ export default function InteractiveGlobe() {
         width={dimensions.width}
         height={dimensions.height}
         backgroundColor="rgba(0, 0, 0, 0)"
-        backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
-        globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-        bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
+        backgroundImageUrl="/textures/night-sky.png"
+        globeImageUrl="/textures/earth-blue-marble.jpg"
+        bumpImageUrl="/textures/earth-topology.png"
         atmosphereColor="#38bdf8"
         atmosphereAltitude={0.15}
         showAtmosphere={true}
@@ -134,11 +134,14 @@ export default function InteractiveGlobe() {
           const isActive = activeNode?.id === node.id
 
           const el = document.createElement('div')
+          el.setAttribute('role', 'button')
+          el.setAttribute('tabindex', '0')
+          el.setAttribute('aria-label', `View ${node.label} project in ${node.continent}`)
           el.className = `group cursor-pointer select-none flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-[#080d19]/90 backdrop-blur-md border ${
             isActive
               ? 'border-cyan-400 shadow-[0_0_20px_rgba(56,189,248,0.6)] scale-105'
               : 'border-cyan-500/30 hover:border-cyan-400/80 hover:shadow-[0_0_15px_rgba(56,189,248,0.3)] shadow-lg'
-          } transition-all duration-300 transform -translate-x-1/2 -translate-y-1/2`
+          } transition-all duration-300 transform -translate-x-1/2 -translate-y-1/2 focus:outline-none focus:ring-2 focus:ring-cyan-400`
 
           const continentUpper = node.continent.toUpperCase()
 
@@ -155,6 +158,13 @@ export default function InteractiveGlobe() {
           el.onclick = (e) => {
             e.stopPropagation()
             setActiveNode(node)
+          }
+          el.onkeydown = (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              e.stopPropagation()
+              setActiveNode(node)
+            }
           }
           el.onmouseenter = () => setHoveredNode(node)
           el.onmouseleave = () => setHoveredNode(null)

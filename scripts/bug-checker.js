@@ -70,16 +70,16 @@ function auditHooksAndDirectives(dirPath) {
           logIssue('WARNING', fullPath, index + 1, 'Added event listener with addEventListener but missing removeEventListener cleanup.');
         }
 
-        // Check for hardcoded external HTTP fonts that might break offline
-        if (line.includes('font="http') || line.includes("font='http")) {
-          logIssue('WARNING', fullPath, index + 1, 'Hardcoded external HTTP/HTTPS font URL in 3D Text component may cause network failure.');
+        // Check for unpkg CDN texture dependencies
+        if (line.includes('unpkg.com')) {
+          logIssue('WARNING', fullPath, index + 1, 'External unpkg CDN dependency found. Prefer local self-hosted assets in /public/textures.');
         }
 
-        // Check for CanvasTexture missing needsUpdate = true
-        if (line.includes('new THREE.CanvasTexture') && !content.includes('needsUpdate')) {
-          logIssue('WARNING', fullPath, index + 1, 'CanvasTexture instantiated without setting needsUpdate = true.');
+        // Check for interactive buttons missing aria-label
+        if (line.includes('<button') && !content.includes('aria-label')) {
+          logIssue('WARNING', fullPath, index + 1, 'Interactive <button> element might be missing an explicit aria-label.');
         }
-      });
+      })
     }
   }
 }

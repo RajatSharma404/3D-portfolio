@@ -9,8 +9,6 @@ interface SceneState {
   setActiveNode: (node: OrbitalNode | null) => void
   hoveredNode: OrbitalNode | null
   setHoveredNode: (node: OrbitalNode | null) => void
-  activeNodeWorldPos: [number, number, number]
-  setActiveNodeWorldPos: (pos: [number, number, number]) => void
   isLoaded: boolean
   setIsLoaded: (v: boolean) => void
 }
@@ -20,8 +18,6 @@ export const useSceneStore = create<SceneState>()((set) => ({
   setActiveNode: (node) => set({ activeNode: node }),
   hoveredNode: null,
   setHoveredNode: (node) => set({ hoveredNode: node }),
-  activeNodeWorldPos: [0, 0, 0],
-  setActiveNodeWorldPos: (pos) => set({ activeNodeWorldPos: pos }),
   isLoaded: false,
   setIsLoaded: (v) => set({ isLoaded: v })
 }))

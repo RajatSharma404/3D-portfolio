@@ -32,7 +32,7 @@ export default function ContinentBar() {
   }
 
   return (
-    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-1.5 p-1.5 rounded-full bg-[#080d19]/80 backdrop-blur-xl border border-white/10 shadow-[0_0_25px_rgba(0,0,0,0.6)] pointer-events-auto">
+    <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-1.5 p-1.5 max-w-[92vw] overflow-x-auto rounded-full bg-[#080d19]/80 backdrop-blur-xl border border-white/10 shadow-[0_0_25px_rgba(0,0,0,0.6)] pointer-events-auto scrollbar-none">
       {CONTINENT_OPTIONS.map((item) => {
         const isAll = item.id === 'all' && !activeNode
         const isActiveNodeContinent =
@@ -45,7 +45,9 @@ export default function ContinentBar() {
           <button
             key={item.label}
             onClick={() => handleSelect(item)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ${
+            aria-label={`Filter by ${item.label}`}
+            aria-pressed={Boolean(isActive)}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium shrink-0 transition-all duration-300 ${
               isActive
                 ? 'bg-white/15 text-white shadow-[0_0_12px_rgba(255,255,255,0.2)] border border-white/20 scale-105'
                 : 'text-white/60 hover:text-white hover:bg-white/5'

@@ -9,22 +9,42 @@ export default function NodePanel() {
   const activeNode = useSceneStore((state) => state.activeNode)
   const setActiveNode = useSceneStore((state) => state.setActiveNode)
 
+  // Listen for Escape key to close panel
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && activeNode) {
+        setActiveNode(null)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [activeNode, setActiveNode])
+
   useEffect(() => {
     if (!panelRef.current) return
-    gsap.set(panelRef.current, { x: '100%' })
+    const isMobile = window.innerWidth < 640
+    if (isMobile) {
+      gsap.set(panelRef.current, { y: '100%', x: '0%' })
+    } else {
+      gsap.set(panelRef.current, { x: '100%', y: '0%' })
+    }
   }, [])
 
   useEffect(() => {
     if (!panelRef.current) return
+    const isMobile = window.innerWidth < 640
+
     if (activeNode) {
       gsap.to(panelRef.current, {
         x: '0%',
+        y: '0%',
         duration: 0.55,
         ease: 'power3.out'
       })
     } else {
       gsap.to(panelRef.current, {
-        x: '100%',
+        x: isMobile ? '0%' : '100%',
+        y: isMobile ? '100%' : '0%',
         duration: 0.45,
         ease: 'power3.in'
       })
@@ -34,7 +54,7 @@ export default function NodePanel() {
   return (
     <div
       ref={panelRef}
-      className="fixed top-0 right-0 h-full w-[400px] max-w-[90vw] z-50 panel-blur bg-[var(--color-panel-bg)] border-l border-[var(--color-panel-border)] p-8 flex flex-col justify-between overflow-y-auto shadow-2xl pointer-events-auto"
+      className="fixed bottom-0 right-0 sm:top-0 h-auto max-h-[85vh] sm:h-full w-full sm:w-[420px] sm:max-w-[90vw] z-50 panel-blur bg-[var(--color-panel-bg)] border-t sm:border-t-0 sm:border-l border-[var(--color-panel-border)] p-6 sm:p-8 flex flex-col justify-between overflow-y-auto shadow-2xl pointer-events-auto rounded-t-3xl sm:rounded-none"
     >
       <div>
         {/* Header & Close Button */}
@@ -46,6 +66,7 @@ export default function NodePanel() {
             onClick={() => setActiveNode(null)}
             className="w-8 h-8 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all text-xl"
             title="Close Panel"
+            aria-label="Close project panel"
           >
             ×
           </button>
