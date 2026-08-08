@@ -21,14 +21,25 @@ export default function ContactLink() {
       ref={containerRef}
       className="absolute bottom-8 right-8 z-40 flex flex-col items-end gap-1.5 select-none pointer-events-auto"
     >
-      <a
-        href="https://github.com/RajatSharma404"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="font-mono text-[10px] tracking-[0.1em] text-white/30 hover:text-white/60 transition-colors"
-      >
-        github.com/RajatSharma404
-      </a>
+      <div className="flex items-center gap-3 font-mono text-[10px] tracking-[0.1em] text-white/40">
+        <a
+          href="https://pradite.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-cyan-400/80 hover:text-cyan-300 transition-colors font-bold"
+        >
+          pradite.com
+        </a>
+        <span>•</span>
+        <a
+          href="https://github.com/RajatSharma404"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-white/70 transition-colors"
+        >
+          github.com/RajatSharma404
+        </a>
+      </div>
 
       <a
         href="mailto:rajat.sharma.myid1@gmail.com"
