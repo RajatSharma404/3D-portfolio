@@ -16,6 +16,8 @@ export default function InteractiveGlobe() {
   const isZoomedOut = useSceneStore((state) => state.isZoomedOut)
   const setIsZoomedOut = useSceneStore((state) => state.setIsZoomedOut)
 
+  const isAnimatingCam = useRef(false)
+
   // Measure container dimensions for responsive canvas sizing
   useEffect(() => {
     const updateSize = () => {
@@ -50,7 +52,7 @@ export default function InteractiveGlobe() {
       const controls = globeRef.current.controls()
       if (controls) {
         const handleControlsChange = () => {
-          if (globeRef.current) {
+          if (globeRef.current && !isAnimatingCam.current) {
             const pov = globeRef.current.pointOfView()
             if (pov && typeof pov.altitude === 'number') {
               const zoomedOut = pov.altitude >= 3.2
@@ -66,17 +68,28 @@ export default function InteractiveGlobe() {
     }
   }, [setIsZoomedOut])
 
-  // Fly camera to zoomed-out position when isZoomedOut is programmatically activated
+  // Fly camera to zoomed-out or zoomed-in position when isZoomedOut state changes
   useEffect(() => {
     if (globeRef.current) {
-      if (isZoomedOut) {
-        const currentPov = globeRef.current.pointOfView()
-        if (currentPov.altitude < 3.2) {
-          globeRef.current.pointOfView(
-            { lat: currentPov.lat, lng: currentPov.lng, altitude: 3.8 },
-            1000
-          )
-        }
+      const currentPov = globeRef.current.pointOfView()
+      if (isZoomedOut && currentPov.altitude < 3.2) {
+        isAnimatingCam.current = true
+        globeRef.current.pointOfView(
+          { lat: currentPov.lat, lng: currentPov.lng, altitude: 3.8 },
+          1000
+        )
+        setTimeout(() => {
+          isAnimatingCam.current = false
+        }, 1100)
+      } else if (!isZoomedOut && currentPov.altitude >= 3.0) {
+        isAnimatingCam.current = true
+        globeRef.current.pointOfView(
+          { lat: currentPov.lat, lng: currentPov.lng, altitude: 2.1 },
+          1000
+        )
+        setTimeout(() => {
+          isAnimatingCam.current = false
+        }, 1100)
       }
     }
   }, [isZoomedOut])

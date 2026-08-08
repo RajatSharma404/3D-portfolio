@@ -9,6 +9,12 @@ export default function UserProfileModal() {
   const isZoomedOut = useSceneStore((state) => state.isZoomedOut)
   const setIsZoomedOut = useSceneStore((state) => state.setIsZoomedOut)
 
+  const handleClose = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsZoomedOut(false)
+  }
+
   // Listen for Escape key to close bio modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -51,11 +57,11 @@ export default function UserProfileModal() {
       style={{ opacity: 0, scale: 0.95, transform: 'translateY(20px)', pointerEvents: 'none' }}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-8 bg-black/75 backdrop-blur-xl overflow-y-auto"
     >
-      <div className="relative w-full max-w-4xl max-h-[90vh] bg-[#070d19]/95 border border-cyan-500/30 rounded-2xl sm:rounded-3xl shadow-[0_0_50px_rgba(56,189,248,0.25)] p-6 sm:p-8 md:p-10 overflow-y-auto text-white scrollbar-thin scrollbar-thumb-cyan-500/20">
+      <div className="relative w-full max-w-4xl max-h-[90vh] bg-[#070d19]/95 border border-cyan-500/30 rounded-2xl sm:rounded-3xl shadow-[0_0_50px_rgba(56,189,248,0.25)] p-6 sm:p-8 md:p-10 overflow-y-auto text-white scrollbar-thin scrollbar-thumb-cyan-500/20 pointer-events-auto">
         {/* Close Button */}
         <button
-          onClick={() => setIsZoomedOut(false)}
-          className="absolute top-5 right-5 sm:top-6 sm:right-6 w-9 h-9 rounded-full bg-white/10 hover:bg-cyan-500/20 hover:border-cyan-400 border border-white/20 flex items-center justify-center text-white/70 hover:text-white transition-all text-xl"
+          onClick={handleClose}
+          className="absolute top-5 right-5 sm:top-6 sm:right-6 w-9 h-9 rounded-full bg-white/10 hover:bg-cyan-500/20 hover:border-cyan-400 border border-white/20 flex items-center justify-center text-white/70 hover:text-white transition-all text-xl cursor-pointer pointer-events-auto"
           title="Zoom back into Globe"
           aria-label="Close bio details"
         >
@@ -328,8 +334,8 @@ export default function UserProfileModal() {
             &ldquo;Ship useful products, not just polished screens.&rdquo;
           </p>
           <button
-            onClick={() => setIsZoomedOut(false)}
-            className="px-6 py-2.5 rounded-full bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-xs transition-all shadow-[0_0_20px_rgba(56,189,248,0.5)] flex items-center gap-2"
+            onClick={handleClose}
+            className="px-6 py-2.5 rounded-full bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-xs transition-all shadow-[0_0_20px_rgba(56,189,248,0.5)] flex items-center gap-2 cursor-pointer pointer-events-auto"
           >
             <span>🔍 Zoom In to Interactive Globe</span>
             <span>→</span>
