@@ -13,6 +13,8 @@ export default function InteractiveGlobe() {
   const activeNode = useSceneStore((state) => state.activeNode)
   const setActiveNode = useSceneStore((state) => state.setActiveNode)
   const setHoveredNode = useSceneStore((state) => state.setHoveredNode)
+  const isZoomedOut = useSceneStore((state) => state.isZoomedOut)
+  const setIsZoomedOut = useSceneStore((state) => state.setIsZoomedOut)
 
   // Measure container dimensions for responsive canvas sizing
   useEffect(() => {
@@ -42,12 +44,49 @@ export default function InteractiveGlobe() {
     }
   }, [])
 
+  // Track zoom level altitude from OrbitControls change listener
+  useEffect(() => {
+    if (globeRef.current) {
+      const controls = globeRef.current.controls()
+      if (controls) {
+        const handleControlsChange = () => {
+          if (globeRef.current) {
+            const pov = globeRef.current.pointOfView()
+            if (pov && typeof pov.altitude === 'number') {
+              const zoomedOut = pov.altitude >= 3.2
+              if (useSceneStore.getState().isZoomedOut !== zoomedOut) {
+                setIsZoomedOut(zoomedOut)
+              }
+            }
+          }
+        }
+        controls.addEventListener('change', handleControlsChange)
+        return () => controls.removeEventListener('change', handleControlsChange)
+      }
+    }
+  }, [setIsZoomedOut])
+
+  // Fly camera to zoomed-out position when isZoomedOut is programmatically activated
+  useEffect(() => {
+    if (globeRef.current) {
+      if (isZoomedOut) {
+        const currentPov = globeRef.current.pointOfView()
+        if (currentPov.altitude < 3.2) {
+          globeRef.current.pointOfView(
+            { lat: currentPov.lat, lng: currentPov.lng, altitude: 3.8 },
+            1000
+          )
+        }
+      }
+    }
+  }, [isZoomedOut])
+
   // Fly to active node position when selected, or reset to initial view when null
   useEffect(() => {
     if (globeRef.current) {
       const controls = globeRef.current.controls()
       if (controls) {
-        controls.autoRotate = !activeNode
+        controls.autoRotate = !activeNode && !isZoomedOut
         controls.autoRotateSpeed = 0.35
       }
       if (activeNode) {
@@ -59,18 +98,9 @@ export default function InteractiveGlobe() {
           },
           1400
         )
-      } else {
-        globeRef.current.pointOfView(
-          {
-            lat: -15,
-            lng: 130,
-            altitude: 2.1
-          },
-          1200
-        )
       }
     }
-  }, [activeNode])
+  }, [activeNode, isZoomedOut])
 
   const handlePointClick = (point: object) => {
     const node = point as OrbitalNode

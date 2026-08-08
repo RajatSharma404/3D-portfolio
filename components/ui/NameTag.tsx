@@ -3,8 +3,12 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 
+import { useSceneStore } from '@/components/providers/SceneStateProvider'
+
 export default function NameTag() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const isZoomedOut = useSceneStore((state) => state.isZoomedOut)
+  const setIsZoomedOut = useSceneStore((state) => state.setIsZoomedOut)
 
   useEffect(() => {
     if (containerRef.current) {
@@ -42,8 +46,17 @@ export default function NameTag() {
       {/* Interactive Guidance Hint */}
       <div className="flex items-center gap-2 text-[11px] text-cyan-400/80 font-mono mt-1">
         <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#38bdf8]" />
-        <span>Click a continent to explore projects · Drag to rotate</span>
+        <span>Click a project to explore · Zoom out for Bio</span>
       </div>
+
+      {/* Zoom out for Bio Button */}
+      <button
+        onClick={() => setIsZoomedOut(!isZoomedOut)}
+        aria-label="Toggle full bio and resume overlay"
+        className="mt-1 flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/15 border border-cyan-400/40 text-cyan-300 hover:bg-cyan-400 hover:text-black transition-all text-xs font-semibold w-fit shadow-[0_0_12px_rgba(56,189,248,0.2)]"
+      >
+        <span>🔍 {isZoomedOut ? 'Zoom In to Globe' : 'Zoom Out for Full Bio & Resume'}</span>
+      </button>
     </div>
   )
 }

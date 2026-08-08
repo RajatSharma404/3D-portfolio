@@ -11,6 +11,8 @@ interface SceneState {
   setHoveredNode: (node: OrbitalNode | null) => void
   isLoaded: boolean
   setIsLoaded: (v: boolean) => void
+  isZoomedOut: boolean
+  setIsZoomedOut: (v: boolean) => void
 }
 
 export const useSceneStore = create<SceneState>()((set) => ({
@@ -19,7 +21,9 @@ export const useSceneStore = create<SceneState>()((set) => ({
   hoveredNode: null,
   setHoveredNode: (node) => set({ hoveredNode: node }),
   isLoaded: false,
-  setIsLoaded: (v) => set({ isLoaded: v })
+  setIsLoaded: (v) => set({ isLoaded: v }),
+  isZoomedOut: false,
+  setIsZoomedOut: (v) => set({ isZoomedOut: v })
 }))
 
 export default function SceneStateProvider({ children }: { children: React.ReactNode }) {
