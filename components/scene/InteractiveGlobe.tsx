@@ -128,7 +128,7 @@ export default function InteractiveGlobe() {
         htmlLat="lat"
         htmlLng="lng"
         htmlAltitude={0.04}
-        htmlTransitionDuration={1000}
+        htmlTransitionDuration={0}
         htmlElement={(d: object) => {
           const node = d as OrbitalNode
           const isActive = activeNode?.id === node.id
@@ -139,9 +139,9 @@ export default function InteractiveGlobe() {
           el.setAttribute('aria-label', `View ${node.label} project in ${node.continent}`)
           el.className = `group cursor-pointer select-none flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-[#080d19]/90 backdrop-blur-md border ${
             isActive
-              ? 'border-cyan-400 shadow-[0_0_20px_rgba(56,189,248,0.6)] scale-105'
+              ? 'border-cyan-400 shadow-[0_0_20px_rgba(56,189,248,0.6)]'
               : 'border-cyan-500/30 hover:border-cyan-400/80 hover:shadow-[0_0_15px_rgba(56,189,248,0.3)] shadow-lg'
-          } transition-all duration-300 transform -translate-x-1/2 -translate-y-1/2 focus:outline-none focus:ring-2 focus:ring-cyan-400`
+          } transition-colors duration-300 transform -translate-x-1/2 -translate-y-1/2 focus:outline-none focus:ring-2 focus:ring-cyan-400`
 
           const continentUpper = node.continent.toUpperCase()
 
