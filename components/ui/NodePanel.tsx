@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Link from 'next/link'
 import gsap from 'gsap'
 import { useSceneStore } from '@/components/providers/SceneStateProvider'
 
@@ -111,18 +112,28 @@ export default function NodePanel() {
         )}
       </div>
 
-      {/* Footer Project Link */}
-      {activeNode?.url && (
-        <div className="pt-6 border-t border-white/10">
-          <a
-            href={activeNode.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 rounded-full border border-white/20 text-white text-sm hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-all bg-white/5 hover:bg-white/10"
+      {/* Footer Project Links */}
+      {activeNode && (
+        <div className="pt-6 border-t border-white/10 flex flex-col gap-3">
+          <Link
+            href={`/projects/${activeNode.id}`}
+            className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 rounded-full bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-sm transition-all shadow-[0_0_20px_rgba(56,189,248,0.4)]"
           >
-            <span>View Project Repository</span>
+            <span>🚀 Explore Dedicated Project Page</span>
             <span>→</span>
-          </a>
+          </Link>
+
+          {activeNode.url && (
+            <a
+              href={activeNode.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 w-full px-5 py-2.5 rounded-full border border-white/20 text-white/80 text-xs hover:border-cyan-400 hover:text-cyan-300 transition-all bg-white/5 hover:bg-white/10"
+            >
+              <span>View GitHub Repository</span>
+              <span>↗</span>
+            </a>
+          )}
         </div>
       )}
     </div>

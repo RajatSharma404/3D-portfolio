@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Link from 'next/link'
 import gsap from 'gsap'
 import { useSceneStore } from '@/components/providers/SceneStateProvider'
 
@@ -334,48 +335,72 @@ export default function UserProfileModal() {
               </h2>
               <div className="space-y-3.5">
                 {/* Proj 1 */}
-                <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400/40 transition-colors">
-                  <h3 className="font-bold text-white text-xs mb-1">🏋️ Fitness Progression Tracker</h3>
-                  <p className="text-white/75 text-[11px] mb-2 leading-relaxed">Gamified strength-training app featuring a skill-tree UI (ReactFlow DAG), PR logging, and Epley 1RM math. Integrated Gemini AI coaching for personalised workout plans & Google OAuth; deployed end-to-end.</p>
+                <Link
+                  href="/projects/body-planner"
+                  className="block p-3.5 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400/60 hover:bg-white/10 transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className="font-bold text-white text-xs group-hover:text-cyan-300 transition-colors">🏋️ Fitness Progression Tracker</h3>
+                    <span className="text-[10px] font-mono text-cyan-400 group-hover:translate-x-0.5 transition-transform">Explore →</span>
+                  </div>
+                  <p className="text-white/75 text-[11px] mb-2 leading-relaxed">Gamified strength-training app featuring a skill-tree UI (ReactFlow DAG), PR logging, and Epley 1RM math. Integrated Gemini AI coaching & Google OAuth; deployed end-to-end.</p>
                   <div className="flex flex-wrap gap-1">
                     {['Next.js 15', 'React 19', 'Express.js', 'Prisma', 'PostgreSQL', 'Gemini API', 'Google OAuth'].map((t) => (
                       <span key={t} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400">{t}</span>
                     ))}
                   </div>
-                </div>
+                </Link>
 
                 {/* Proj 2 */}
-                <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400/40 transition-colors">
-                  <h3 className="font-bold text-white text-xs mb-1">📚 DSA Tracker Pro</h3>
+                <Link
+                  href="/projects/dsa-tracker"
+                  className="block p-3.5 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400/60 hover:bg-white/10 transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className="font-bold text-white text-xs group-hover:text-cyan-300 transition-colors">📚 DSA Tracker Pro</h3>
+                    <span className="text-[10px] font-mono text-cyan-400 group-hover:translate-x-0.5 transition-transform">Explore →</span>
+                  </div>
                   <p className="text-white/75 text-[11px] mb-2 leading-relaxed">Full-stack DSA platform with roadmap tracking, Monaco problem workspace, AI hint/code trace endpoints, and a Chrome extension syncing LeetCode submissions with verdict, runtime, and memory stats.</p>
                   <div className="flex flex-wrap gap-1">
                     {['Next.js 16', 'Express 5', 'Prisma', 'PostgreSQL', 'Monaco Editor', 'Chrome Extension'].map((t) => (
                       <span key={t} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400">{t}</span>
                     ))}
                   </div>
-                </div>
+                </Link>
 
                 {/* Proj 3 */}
-                <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 hover:border-purple-400/40 transition-colors">
-                  <h3 className="font-bold text-white text-xs mb-1">🤖 Autonomous Job-Hunting Agent</h3>
-                  <p className="text-white/75 text-[11px] mb-2 leading-relaxed">Browser-automation agent for job applications across LinkedIn, Internshala, Unstop & Naukri with Qwen LLM form filling and intelligent CAPTCHA handling.</p>
+                <Link
+                  href="/projects/dsa-city"
+                  className="block p-3.5 rounded-xl bg-white/5 border border-white/10 hover:border-purple-400/60 hover:bg-white/10 transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className="font-bold text-white text-xs group-hover:text-purple-300 transition-colors">🏙️ DSA City 3D</h3>
+                    <span className="text-[10px] font-mono text-purple-300 group-hover:translate-x-0.5 transition-transform">Explore →</span>
+                  </div>
+                  <p className="text-white/75 text-[11px] mb-2 leading-relaxed">Gamified 3D city-building leaderboard for data structures and algorithms built with Three.js WebGL and procedural building generation.</p>
                   <div className="flex flex-wrap gap-1">
-                    {['Python', 'Qwen (Ollama)', 'Playwright', 'Selenium'].map((t) => (
+                    {['Three.js', 'Next.js', 'PostgreSQL', 'Prisma', 'WebGL'].map((t) => (
                       <span key={t} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300">{t}</span>
                     ))}
                   </div>
-                </div>
+                </Link>
 
                 {/* Proj 4 */}
-                <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 hover:border-emerald-400/40 transition-colors">
-                  <h3 className="font-bold text-white text-xs mb-1">💰 AI Salary Predictor</h3>
-                  <p className="text-white/75 text-[11px] mb-2 leading-relaxed">Server-side Linear Regression salary predictor with dynamic Matplotlib chart rendering and dark-themed UI — zero client-side JavaScript.</p>
+                <Link
+                  href="/projects/mastermind"
+                  className="block p-3.5 rounded-xl bg-white/5 border border-white/10 hover:border-emerald-400/60 hover:bg-white/10 transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className="font-bold text-white text-xs group-hover:text-emerald-300 transition-colors">♟️ MasterMind Chess Analysis</h3>
+                    <span className="text-[10px] font-mono text-emerald-300 group-hover:translate-x-0.5 transition-transform">Explore →</span>
+                  </div>
+                  <p className="text-white/75 text-[11px] mb-2 leading-relaxed">Chess engine platform combining Stockfish 17 WebAssembly evaluation graphs with Gemini 2.0 Flash positional commentary.</p>
                   <div className="flex flex-wrap gap-1">
-                    {['Flask', 'scikit-learn', 'Matplotlib', 'Jinja2'].map((t) => (
+                    {['Next.js', 'FastAPI', 'Stockfish 17', 'Gemini 2.0 Flash', 'WebAssembly'].map((t) => (
                       <span key={t} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300">{t}</span>
                     ))}
                   </div>
-                </div>
+                </Link>
               </div>
             </div>
           </div>
