@@ -41,6 +41,10 @@ export default function InteractiveGlobe() {
         controls.autoRotate = true
         controls.autoRotateSpeed = 0.75
         controls.enableZoom = true
+        controls.enableRotate = true
+        controls.rotateSpeed = 0.8
+        controls.minPolarAngle = 0.05
+        controls.maxPolarAngle = Math.PI - 0.05
       }
       globeRef.current.pointOfView({ lat: -15, lng: 130, altitude: 2.1 }, 0)
     }
@@ -201,18 +205,24 @@ export default function InteractiveGlobe() {
             </div>
           `
 
+          let startX = 0
+          let startY = 0
+
+          el.onpointerdown = (e) => {
+            startX = e.clientX
+            startY = e.clientY
+          }
+
           const triggerSelect = (e: Event) => {
+            if (e instanceof MouseEvent) {
+              const dx = Math.abs(e.clientX - startX)
+              const dy = Math.abs(e.clientY - startY)
+              if (dx > 6 || dy > 6) return // User was dragging the globe!
+            }
             e.preventDefault()
             e.stopPropagation()
             setActiveNode(node)
           }
-
-          // Prevent OrbitControls on canvas from capturing pointer clicks on badge
-          el.onpointerdown = (e) => e.stopPropagation()
-          el.onmousedown = (e) => e.stopPropagation()
-          el.ontouchstart = (e) => e.stopPropagation()
-          el.onpointerup = (e) => e.stopPropagation()
-          el.onmouseup = (e) => e.stopPropagation()
 
           el.onclick = triggerSelect
           el.ontouchend = triggerSelect
