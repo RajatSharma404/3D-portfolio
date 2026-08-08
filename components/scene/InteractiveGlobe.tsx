@@ -1,11 +1,13 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Globe, { GlobeMethods } from 'react-globe.gl'
 import { NODES, GLOBE_ARCS, OrbitalNode } from '@/lib/nodes'
 import { useSceneStore } from '@/components/providers/SceneStateProvider'
 
 export default function InteractiveGlobe() {
+  const router = useRouter()
   const globeRef = useRef<GlobeMethods | undefined>(undefined)
   const containerRef = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 })
@@ -59,6 +61,12 @@ export default function InteractiveGlobe() {
           if (globeRef.current && !isAnimatingCam.current) {
             const pov = globeRef.current.pointOfView()
             if (pov && typeof pov.altitude === 'number') {
+              const currentActive = useSceneStore.getState().activeNode
+              // Auto navigate to dedicated project page when zoomed in close to an active project
+              if (currentActive && pov.altitude <= 1.45) {
+                router.push(`/projects/${currentActive.id}`)
+                return
+              }
               const zoomedOut = pov.altitude >= 3.2
               if (useSceneStore.getState().isZoomedOut !== zoomedOut) {
                 setIsZoomedOut(zoomedOut)
@@ -70,7 +78,7 @@ export default function InteractiveGlobe() {
         return () => controls.removeEventListener('change', handleControlsChange)
       }
     }
-  }, [setIsZoomedOut])
+  }, [setIsZoomedOut, router])
 
   // Fly camera to zoomed-out or zoomed-in position when isZoomedOut state changes
   useEffect(() => {
@@ -121,11 +129,33 @@ export default function InteractiveGlobe() {
 
   const handlePointClick = (point: object) => {
     const node = point as OrbitalNode
-    setActiveNode(node)
+    const currentActive = useSceneStore.getState().activeNode
+    if (currentActive?.id === node.id) {
+      router.push(`/projects/${node.id}`)
+    } else {
+      setActiveNode(node)
+    }
   }
 
   return (
     <div ref={containerRef} className="absolute inset-0 w-full h-full bg-[#030712] overflow-hidden">
+      {/* Floating Active Node Dedicated Page Prompt Banner */}
+      {activeNode && !isZoomedOut && (
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 px-4 py-2 rounded-full bg-[#080d19]/90 border border-cyan-400/60 shadow-[0_0_25px_rgba(56,189,248,0.4)] backdrop-blur-xl pointer-events-auto transition-all">
+          <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
+          <span className="font-mono text-xs font-bold text-white">
+            {activeNode.label} Node Active
+          </span>
+          <button
+            onClick={() => router.push(`/projects/${activeNode.id}`)}
+            className="px-3.5 py-1 rounded-full bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-xs transition-all flex items-center gap-1.5 shadow-md cursor-pointer"
+          >
+            <span>Zoom In / Open Dedicated Page</span>
+            <span>→</span>
+          </button>
+        </div>
+      )}
+
       <Globe
         ref={globeRef}
         width={dimensions.width}
@@ -221,7 +251,19 @@ export default function InteractiveGlobe() {
             }
             e.preventDefault()
             e.stopPropagation()
-            setActiveNode(node)
+            
+            const currentActive = useSceneStore.getState().activeNode
+            if (currentActive?.id === node.id) {
+              router.push(`/projects/${node.id}`)
+            } else {
+              setActiveNode(node)
+            }
+          }
+
+          el.ondblclick = (e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            router.push(`/projects/${node.id}`)
           }
 
           el.onclick = triggerSelect
