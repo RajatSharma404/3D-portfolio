@@ -138,16 +138,18 @@ export default function InteractiveGlobe() {
           el.setAttribute('role', 'button')
           el.setAttribute('tabindex', '0')
           el.setAttribute('aria-label', `View ${node.label} project in ${node.continent}`)
-          el.className = `group cursor-pointer select-none flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-[#080d19]/90 backdrop-blur-md border ${
+          el.className = `group cursor-pointer select-none flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-[#080d19]/90 backdrop-blur-md border pointer-events-auto ${
             isActive
-              ? 'border-cyan-400 shadow-[0_0_20px_rgba(56,189,248,0.6)]'
+              ? 'border-cyan-400 shadow-[0_0_22px_rgba(56,189,248,0.7)] bg-[#0c162d]'
               : 'border-cyan-500/30 hover:border-cyan-400/80 hover:shadow-[0_0_15px_rgba(56,189,248,0.3)] shadow-lg'
           } transition-colors duration-300 transform -translate-x-1/2 -translate-y-1/2 focus:outline-none focus:ring-2 focus:ring-cyan-400`
 
           const continentUpper = node.continent.toUpperCase()
 
           el.innerHTML = `
-            <div class="w-5 h-5 rounded-md bg-[#0f172a] border border-cyan-500/40 flex items-center justify-center shadow-inner group-hover:border-cyan-400 transition-colors">
+            <div class="w-5 h-5 rounded-md bg-[#0f172a] border ${
+              isActive ? 'border-cyan-400' : 'border-cyan-500/40'
+            } flex items-center justify-center shadow-inner group-hover:border-cyan-400 transition-colors">
               <span class="w-2 h-2 rounded-sm bg-cyan-400 shadow-[0_0_6px_#38bdf8] group-hover:scale-125 transition-transform"></span>
             </div>
             <div class="flex flex-col text-left">
@@ -156,15 +158,25 @@ export default function InteractiveGlobe() {
             </div>
           `
 
-          el.onclick = (e) => {
+          const triggerSelect = (e: Event) => {
+            e.preventDefault()
             e.stopPropagation()
             setActiveNode(node)
           }
+
+          // Prevent OrbitControls on canvas from capturing pointer clicks on badge
+          el.onpointerdown = (e) => e.stopPropagation()
+          el.onmousedown = (e) => e.stopPropagation()
+          el.ontouchstart = (e) => e.stopPropagation()
+          el.onpointerup = (e) => e.stopPropagation()
+          el.onmouseup = (e) => e.stopPropagation()
+
+          el.onclick = triggerSelect
+          el.ontouchend = triggerSelect
+
           el.onkeydown = (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault()
-              e.stopPropagation()
-              setActiveNode(node)
+              triggerSelect(e)
             }
           }
           el.onmouseenter = () => setHoveredNode(node)
