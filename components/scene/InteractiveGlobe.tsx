@@ -19,6 +19,7 @@ export default function InteractiveGlobe() {
   const setIsZoomedOut = useSceneStore((state) => state.setIsZoomedOut)
 
   const isAnimatingCam = useRef(false)
+  const isNavigatingRef = useRef(false)
 
   // Measure container dimensions for responsive canvas sizing
   useEffect(() => {
@@ -35,7 +36,7 @@ export default function InteractiveGlobe() {
     return () => window.removeEventListener('resize', updateSize)
   }, [])
 
-  // Configure initial globe controls & position
+  // Initial camera placement on load
   useEffect(() => {
     if (globeRef.current) {
       const controls = globeRef.current.controls()
@@ -43,41 +44,56 @@ export default function InteractiveGlobe() {
         controls.autoRotate = true
         controls.autoRotateSpeed = 0.75
         controls.enableZoom = true
-        controls.enableRotate = true
-        controls.rotateSpeed = 0.8
-        controls.minPolarAngle = 0.05
-        controls.maxPolarAngle = Math.PI - 0.05
       }
       globeRef.current.pointOfView({ lat: -15, lng: 130, altitude: 2.1 }, 0)
     }
   }, [])
 
-  // Track zoom level altitude from OrbitControls change listener
+  // Consolidated OrbitControls listener: Handles zoom-in navigation and zoom state tracking safely
   useEffect(() => {
-    if (globeRef.current) {
-      const controls = globeRef.current.controls()
-      if (controls) {
-        const handleControlsChange = () => {
-          if (globeRef.current && !isAnimatingCam.current) {
-            const pov = globeRef.current.pointOfView()
-            if (pov && typeof pov.altitude === 'number') {
-              const currentActive = useSceneStore.getState().activeNode
-              // Auto navigate to dedicated project page when zoomed in close to an active project
-              if (currentActive && pov.altitude <= 1.45) {
-                router.push(`/projects/${currentActive.id}`)
-                return
-              }
-              const zoomedOut = pov.altitude >= 3.2
-              if (useSceneStore.getState().isZoomedOut !== zoomedOut) {
-                setIsZoomedOut(zoomedOut)
-              }
+    isNavigatingRef.current = false
+    if (!globeRef.current) return
+
+    const controls = globeRef.current.controls()
+    if (!controls) return
+
+    const handleControlsChange = () => {
+      if (isNavigatingRef.current || !globeRef.current || isAnimatingCam.current) return
+
+      const pov = globeRef.current.pointOfView()
+      if (!pov || typeof pov.altitude !== 'number') return
+
+      // Zoom-in auto-redirection: trigger when camera altitude < 0.85
+      if (pov.altitude < 0.85) {
+        isNavigatingRef.current = true
+        const currentActive = useSceneStore.getState().activeNode
+        
+        let targetNode = currentActive
+        if (!targetNode) {
+          let minDist = Infinity
+          NODES.forEach((node) => {
+            const dist = Math.hypot(node.lat - pov.lat, node.lng - pov.lng)
+            if (dist < minDist) {
+              minDist = dist
+              targetNode = node
             }
-          }
+          })
         }
-        controls.addEventListener('change', handleControlsChange)
-        return () => controls.removeEventListener('change', handleControlsChange)
+        if (targetNode) {
+          router.push(`/projects/${targetNode.id}`)
+          return
+        }
+      }
+
+      // Update zoomed-out state indicator
+      const zoomedOut = pov.altitude >= 3.2
+      if (useSceneStore.getState().isZoomedOut !== zoomedOut) {
+        setIsZoomedOut(zoomedOut)
       }
     }
+
+    controls.addEventListener('change', handleControlsChange)
+    return () => controls.removeEventListener('change', handleControlsChange)
   }, [setIsZoomedOut, router])
 
   // Fly camera to zoomed-out or zoomed-in position when isZoomedOut state changes
