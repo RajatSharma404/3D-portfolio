@@ -29,7 +29,8 @@ export default function RootLayout({
           background: '#050508',
           color: '#ffffff',
           margin: 0,
-          overflow: 'hidden'
+          overflowX: 'hidden',
+          overflowY: 'auto'
         }}
       >
         {children}

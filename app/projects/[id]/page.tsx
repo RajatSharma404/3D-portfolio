@@ -33,7 +33,7 @@ export default async function ProjectPage({ params }: PageProps) {
   const nextNode = NODES[(nodeIndex + 1) % NODES.length]
 
   return (
-    <main className="min-h-screen bg-[#030712] text-white selection:bg-cyan-500/20 selection:text-cyan-300 relative overflow-x-hidden">
+    <main className="min-h-screen w-full bg-[#030712] text-white selection:bg-cyan-500/20 selection:text-cyan-300 relative overflow-x-hidden overflow-y-auto select-text">
       {/* Ambient background glows */}
       <div className="fixed top-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="fixed bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px] pointer-events-none" />

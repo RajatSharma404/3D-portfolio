@@ -3,7 +3,6 @@
 import { Suspense } from 'react'
 import dynamic from 'next/dynamic'
 import SceneStateProvider from '@/components/providers/SceneStateProvider'
-import NodePanel from '@/components/ui/NodePanel'
 import NameTag from '@/components/ui/NameTag'
 import NavDots from '@/components/ui/NavDots'
 import ContinentBar from '@/components/ui/ContinentBar'
@@ -26,7 +25,6 @@ export default function AppShell() {
         <NavDots />
         <ContinentBar />
         <ContactLink />
-        <NodePanel />
         <UserProfileModal />
         <LoadingScreen />
       </SceneStateProvider>

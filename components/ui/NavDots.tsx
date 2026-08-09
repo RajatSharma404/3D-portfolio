@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import gsap from 'gsap'
 import { NODES } from '@/lib/nodes'
 import { useSceneStore } from '@/components/providers/SceneStateProvider'
@@ -8,7 +9,7 @@ import { useSceneStore } from '@/components/providers/SceneStateProvider'
 export default function NavDots() {
   const containerRef = useRef<HTMLDivElement>(null)
   const activeNode = useSceneStore((state) => state.activeNode)
-  const setActiveNode = useSceneStore((state) => state.setActiveNode)
+  const router = useRouter()
 
   useEffect(() => {
     if (containerRef.current) {
@@ -28,16 +29,6 @@ export default function NavDots() {
     }
   }, [])
 
-  useEffect(() => {
-    if (containerRef.current) {
-      gsap.to(containerRef.current, {
-        opacity: activeNode ? 0 : 1,
-        pointerEvents: activeNode ? 'none' : 'auto',
-        duration: 0.3
-      })
-    }
-  }, [activeNode])
-
   return (
     <div
       ref={containerRef}
@@ -48,7 +39,7 @@ export default function NavDots() {
         return (
           <button
             key={node.id}
-            onClick={() => setActiveNode(node)}
+            onClick={() => router.push(`/projects/${node.id}`)}
             title={node.label}
             aria-label={`Jump to ${node.label} project`}
             aria-current={isActive ? 'true' : undefined}

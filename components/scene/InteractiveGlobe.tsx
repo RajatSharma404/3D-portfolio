@@ -129,33 +129,11 @@ export default function InteractiveGlobe() {
 
   const handlePointClick = (point: object) => {
     const node = point as OrbitalNode
-    const currentActive = useSceneStore.getState().activeNode
-    if (currentActive?.id === node.id) {
-      router.push(`/projects/${node.id}`)
-    } else {
-      setActiveNode(node)
-    }
+    router.push(`/projects/${node.id}`)
   }
 
   return (
     <div ref={containerRef} className="absolute inset-0 w-full h-full bg-[#030712] overflow-hidden">
-      {/* Floating Active Node Dedicated Page Prompt Banner */}
-      {activeNode && !isZoomedOut && (
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 px-4 py-2 rounded-full bg-[#080d19]/90 border border-cyan-400/60 shadow-[0_0_25px_rgba(56,189,248,0.4)] backdrop-blur-xl pointer-events-auto transition-all">
-          <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
-          <span className="font-mono text-xs font-bold text-white">
-            {activeNode.label} Node Active
-          </span>
-          <button
-            onClick={() => router.push(`/projects/${activeNode.id}`)}
-            className="px-3.5 py-1 rounded-full bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-xs transition-all flex items-center gap-1.5 shadow-md cursor-pointer"
-          >
-            <span>Zoom In / Open Dedicated Page</span>
-            <span>→</span>
-          </button>
-        </div>
-      )}
-
       <Globe
         ref={globeRef}
         width={dimensions.width}
@@ -252,12 +230,7 @@ export default function InteractiveGlobe() {
             e.preventDefault()
             e.stopPropagation()
             
-            const currentActive = useSceneStore.getState().activeNode
-            if (currentActive?.id === node.id) {
-              router.push(`/projects/${node.id}`)
-            } else {
-              setActiveNode(node)
-            }
+            router.push(`/projects/${node.id}`)
           }
 
           el.ondblclick = (e) => {
