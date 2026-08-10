@@ -5,17 +5,31 @@ import gsap from 'gsap'
 import { useSceneStore } from '@/components/providers/SceneStateProvider'
 
 export default function LoadingScreen() {
-  const [visible, setVisible] = useState(true)
+  const isLoaded = useSceneStore((state) => state.isLoaded)
+  const setIsLoaded = useSceneStore((state) => state.setIsLoaded)
+  const [visible, setVisible] = useState(false)
   const overlayRef = useRef<HTMLDivElement>(null)
   const textRef = useRef<HTMLParagraphElement>(null)
   const barRef = useRef<HTMLDivElement>(null)
-  const setIsLoaded = useSceneStore((state) => state.setIsLoaded)
 
   useEffect(() => {
+    // Check if site has already loaded in this session
+    const hasSessionLoaded = typeof window !== 'undefined' && sessionStorage.getItem('orbital_loaded') === 'true'
+    if (isLoaded || hasSessionLoaded) {
+      if (!isLoaded) setIsLoaded(true)
+      setVisible(false)
+      return
+    }
+
+    setVisible(true)
+
     const tl = gsap.timeline({
       onComplete: () => {
         setVisible(false)
         setIsLoaded(true)
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('orbital_loaded', 'true')
+        }
       }
     })
 
@@ -23,7 +37,7 @@ export default function LoadingScreen() {
       .to(barRef.current, { width: '100%', duration: 1.4, ease: 'power2.inOut' }, '-=0.2')
       .to(textRef.current, { opacity: 0, duration: 0.4 }, '+=0.2')
       .to(overlayRef.current, { opacity: 0, duration: 0.6, ease: 'power2.inOut' })
-  }, [setIsLoaded])
+  }, [isLoaded, setIsLoaded])
 
   if (!visible) return null
 

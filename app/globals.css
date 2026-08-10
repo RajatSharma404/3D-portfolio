@@ -178,3 +178,125 @@ body {
   will-change: transform, opacity;
 }
 
+/* Card Exit Animations (Slide Back Out) */
+@keyframes flyOutTop {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -90px, 0) scale(0.95);
+  }
+}
+
+@keyframes flyOutBottom {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 90px, 0) scale(0.95);
+  }
+}
+
+@keyframes flyOutLeft {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-140px, 0, 0) scale(0.92);
+  }
+}
+
+@keyframes flyOutRight {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(140px, 0, 0) scale(0.92);
+  }
+}
+
+@keyframes flyOutTopLeft {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-120px, -90px, 0) scale(0.9);
+  }
+}
+
+@keyframes flyOutTopRight {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(120px, -90px, 0) scale(0.9);
+  }
+}
+
+@keyframes flyOutBottomLeft {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-120px, 90px, 0) scale(0.9);
+  }
+}
+
+@keyframes flyOutBottomRight {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(120px, 90px, 0) scale(0.9);
+  }
+}
+
+.animate-card-exit-top {
+  animation: flyOutTop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  will-change: transform, opacity;
+}
+.animate-card-exit-bottom {
+  animation: flyOutBottom 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  will-change: transform, opacity;
+}
+.animate-card-exit-left {
+  animation: flyOutLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  will-change: transform, opacity;
+}
+.animate-card-exit-right {
+  animation: flyOutRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  will-change: transform, opacity;
+}
+.animate-card-exit-top-left {
+  animation: flyOutTopLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  will-change: transform, opacity;
+}
+.animate-card-exit-top-right {
+  animation: flyOutTopRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  will-change: transform, opacity;
+}
+.animate-card-exit-bottom-left {
+  animation: flyOutBottomLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  will-change: transform, opacity;
+}
+.animate-card-exit-bottom-right {
+  animation: flyOutBottomRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  will-change: transform, opacity;
+}
+

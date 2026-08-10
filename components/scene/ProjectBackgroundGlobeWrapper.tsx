@@ -8,6 +8,12 @@ const ProjectBackgroundGlobe = dynamic(
   { ssr: false }
 )
 
-export default function ProjectBackgroundGlobeWrapper({ node }: { node: OrbitalNode }) {
-  return <ProjectBackgroundGlobe node={node} />
+export default function ProjectBackgroundGlobeWrapper({
+  node,
+  onZoomOut
+}: {
+  node: OrbitalNode
+  onZoomOut?: () => void
+}) {
+  return <ProjectBackgroundGlobe node={node} onZoomOut={onZoomOut} />
 }

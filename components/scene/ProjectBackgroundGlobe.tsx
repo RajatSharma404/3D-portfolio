@@ -7,9 +7,10 @@ import { OrbitalNode, GLOBE_ARCS } from '@/lib/nodes'
 
 interface ProjectBackgroundGlobeProps {
   node: OrbitalNode
+  onZoomOut?: () => void
 }
 
-export default function ProjectBackgroundGlobe({ node }: ProjectBackgroundGlobeProps) {
+export default function ProjectBackgroundGlobe({ node, onZoomOut }: ProjectBackgroundGlobeProps) {
   const globeRef = useRef<GlobeMethods | undefined>(undefined)
   const containerRef = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 })
@@ -62,10 +63,14 @@ export default function ProjectBackgroundGlobe({ node }: ProjectBackgroundGlobeP
           const pov = globeRef.current.pointOfView()
           if (!pov || pov.altitude === undefined) return
 
-          // If user manually zooms OUT past altitude 2.65, return to home 3D Earth Globe
+          // If user manually zooms OUT past altitude 2.65, trigger exit slide & return to home 3D Earth Globe
           if (pov.altitude > 2.65) {
             redirectingRef.current = true
-            router.push('/')
+            if (onZoomOut) {
+              onZoomOut()
+            } else {
+              router.push('/')
+            }
           }
         }
 
