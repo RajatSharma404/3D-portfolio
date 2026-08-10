@@ -43,7 +43,7 @@ export default function InteractiveGlobe() {
     NODES.forEach((n) => router.prefetch(`/projects/${n.id}`))
   }, [router])
 
-  // Initial camera placement on load
+  // Initial camera placement & WebGL renderer optimization on load
   useEffect(() => {
     if (globeRef.current) {
       const controls = globeRef.current.controls()
@@ -51,6 +51,10 @@ export default function InteractiveGlobe() {
         controls.autoRotate = true
         controls.autoRotateSpeed = 0.75
         controls.enableZoom = true
+      }
+      const renderer = globeRef.current.renderer()
+      if (renderer && typeof window !== 'undefined') {
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5))
       }
       globeRef.current.pointOfView({ lat: -15, lng: 130, altitude: 2.1 }, 0)
     }

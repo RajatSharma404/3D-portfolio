@@ -52,6 +52,11 @@ export default function ProjectBackgroundGlobe({ node, onZoomOut }: ProjectBackg
         isReadyRef.current = true
       }, 1500)
 
+      const renderer = globeRef.current.renderer()
+      if (renderer && typeof window !== 'undefined') {
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5))
+      }
+
       const controls = globeRef.current.controls()
       if (controls) {
         controls.autoRotate = true
