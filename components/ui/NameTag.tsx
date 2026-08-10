@@ -2,10 +2,15 @@
 
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
-
 import { useSceneStore } from '@/components/providers/SceneStateProvider'
+import { soundManager } from '@/lib/sound'
 
-export default function NameTag() {
+interface NameTagProps {
+  onOpenSearch?: () => void
+  onOpenResume?: () => void
+}
+
+export default function NameTag({ onOpenSearch, onOpenResume }: NameTagProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const isZoomedOut = useSceneStore((state) => state.isZoomedOut)
   const setIsZoomedOut = useSceneStore((state) => state.setIsZoomedOut)
@@ -49,14 +54,48 @@ export default function NameTag() {
         <span>Click a project to explore · Zoom out for Bio</span>
       </div>
 
-      {/* Zoom out for Bio Button */}
-      <button
-        onClick={() => setIsZoomedOut(!isZoomedOut)}
-        aria-label="Toggle full bio and resume overlay"
-        className="mt-1 flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/15 border border-cyan-400/40 text-cyan-300 hover:bg-cyan-400 hover:text-black transition-all text-xs font-semibold w-fit shadow-[0_0_12px_rgba(56,189,248,0.2)]"
-      >
-        <span>🔍 {isZoomedOut ? 'Zoom In to Globe' : 'Zoom Out for Full Bio & Resume'}</span>
-      </button>
+      {/* Action Buttons Row */}
+      <div className="flex flex-wrap items-center gap-2 mt-1">
+        <button
+          onClick={() => {
+            soundManager.playClick()
+            setIsZoomedOut(!isZoomedOut)
+          }}
+          onMouseEnter={() => soundManager.playHover()}
+          aria-label="Toggle full bio and resume overlay"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cyan-500/15 border border-cyan-400/40 text-cyan-300 hover:bg-cyan-400 hover:text-black transition-all text-xs font-semibold shadow-[0_0_12px_rgba(56,189,248,0.2)] cursor-pointer"
+        >
+          <span>🔍 {isZoomedOut ? 'Zoom In to Globe' : 'Zoom Out for Full Bio'}</span>
+        </button>
+
+        {onOpenSearch && (
+          <button
+            onClick={() => {
+              soundManager.playClick()
+              onOpenSearch()
+            }}
+            onMouseEnter={() => soundManager.playHover()}
+            aria-label="Open Command Palette Search"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white hover:text-black transition-all text-xs font-mono font-semibold cursor-pointer"
+          >
+            <span>⚡ ⌘K Search</span>
+          </button>
+        )}
+
+        {onOpenResume && (
+          <button
+            onClick={() => {
+              soundManager.playClick()
+              onOpenResume()
+            }}
+            onMouseEnter={() => soundManager.playHover()}
+            aria-label="View Resume PDF"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-purple-500/20 border border-purple-400/40 text-purple-300 hover:bg-purple-500 hover:text-white transition-all text-xs font-mono font-semibold cursor-pointer"
+          >
+            <span>📄 Resume</span>
+          </button>
+        )}
+      </div>
     </div>
   )
 }

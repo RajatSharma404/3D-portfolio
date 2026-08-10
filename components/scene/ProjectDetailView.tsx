@@ -4,7 +4,7 @@ import React, { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { OrbitalNode } from '@/lib/nodes'
 import ProjectBackgroundGlobeWrapper from '@/components/scene/ProjectBackgroundGlobeWrapper'
-
+import ProjectMediaGallery from '@/components/ui/ProjectMediaGallery'
 import { soundManager } from '@/lib/sound'
 
 interface ProjectDetailViewProps {
@@ -302,6 +302,9 @@ export default function ProjectDetailView({ node, prevNode, nextNode }: ProjectD
                 </div>
               </section>
             )}
+
+            {/* Visual Screenshot & Architecture Gallery */}
+            <ProjectMediaGallery node={node} />
 
           </div>
 
