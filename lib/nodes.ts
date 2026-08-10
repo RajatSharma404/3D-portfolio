@@ -33,6 +33,9 @@ export interface OrbitalNode {
   city: string
   country: string
   continent: string
+  accentColor?: string
+  glowColor?: string
+  gradientClass?: string
 }
 
 export interface GlobeArc {
@@ -87,7 +90,10 @@ export const NODES: OrbitalNode[] = [
     lng: -98.5795,
     city: 'Geographic Center',
     country: 'USA',
-    continent: 'North America'
+    continent: 'North America',
+    accentColor: '#38bdf8',
+    glowColor: 'rgba(56, 189, 248, 0.35)',
+    gradientClass: 'from-cyan-400 via-blue-400 to-indigo-400'
   },
   {
     id: 'countries-quiz',
@@ -131,7 +137,10 @@ export const NODES: OrbitalNode[] = [
     lng: -51.9253,
     city: 'Geographic Center',
     country: 'Brazil',
-    continent: 'South America'
+    continent: 'South America',
+    accentColor: '#c084fc',
+    glowColor: 'rgba(192, 132, 252, 0.35)',
+    gradientClass: 'from-purple-400 via-fuchsia-400 to-pink-400'
   },
   {
     id: 'mastermind',
@@ -175,7 +184,10 @@ export const NODES: OrbitalNode[] = [
     lng: 10.4515,
     city: 'Geographic Center',
     country: 'Germany',
-    continent: 'Europe'
+    continent: 'Europe',
+    accentColor: '#818cf8',
+    glowColor: 'rgba(129, 140, 248, 0.35)',
+    gradientClass: 'from-indigo-400 via-sky-400 to-cyan-400'
   },
   {
     id: 'dsa-tracker',
@@ -219,7 +231,10 @@ export const NODES: OrbitalNode[] = [
     lng: 21.0936,
     city: 'Geographic Center',
     country: 'CAR',
-    continent: 'Africa'
+    continent: 'Africa',
+    accentColor: '#fbbf24',
+    glowColor: 'rgba(251, 191, 36, 0.35)',
+    gradientClass: 'from-amber-400 via-yellow-400 to-orange-400'
   },
   {
     id: 'dsa-city',
@@ -263,7 +278,10 @@ export const NODES: OrbitalNode[] = [
     lng: 78.9629,
     city: 'Geographic Center',
     country: 'India',
-    continent: 'Asia'
+    continent: 'Asia',
+    accentColor: '#34d399',
+    glowColor: 'rgba(52, 211, 153, 0.35)',
+    gradientClass: 'from-emerald-400 via-teal-300 to-cyan-400'
   },
   {
     id: 'body-planner',
@@ -307,7 +325,10 @@ export const NODES: OrbitalNode[] = [
     lng: 133.7751,
     city: 'Geographic Center',
     country: 'Australia',
-    continent: 'Australia & Oceania'
+    continent: 'Australia & Oceania',
+    accentColor: '#60a5fa',
+    glowColor: 'rgba(96, 165, 250, 0.35)',
+    gradientClass: 'from-blue-400 via-sky-300 to-indigo-400'
   }
 ]
 

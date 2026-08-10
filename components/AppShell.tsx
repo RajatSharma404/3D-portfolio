@@ -10,6 +10,7 @@ import LoadingScreen from '@/components/ui/LoadingScreen'
 import ContactLink from '@/components/ui/ContactLink'
 
 import UserProfileModal from '@/components/ui/UserProfileModal'
+import SoundToggle from '@/components/ui/SoundToggle'
 
 const InteractiveGlobe = dynamic(
   () => import('@/components/scene/InteractiveGlobe'),
@@ -26,6 +27,7 @@ export default function AppShell() {
         <ContinentBar />
         <ContactLink />
         <UserProfileModal />
+        <SoundToggle />
         <LoadingScreen />
       </SceneStateProvider>
     </Suspense>

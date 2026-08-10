@@ -2,6 +2,7 @@
 
 import { NODES, OrbitalNode } from '@/lib/nodes'
 import { useSceneStore } from '@/components/providers/SceneStateProvider'
+import { soundManager } from '@/lib/sound'
 
 const CONTINENT_OPTIONS = [
   { label: 'All Earth', id: 'all', color: 'bg-cyan-400' },
@@ -18,6 +19,7 @@ export default function ContinentBar() {
   const setActiveNode = useSceneStore((state) => state.setActiveNode)
 
   const handleSelect = (item: (typeof CONTINENT_OPTIONS)[number]) => {
+    soundManager.playClick()
     if (item.id === 'all') {
       setActiveNode(null)
       return
@@ -45,6 +47,7 @@ export default function ContinentBar() {
           <button
             key={item.label}
             onClick={() => handleSelect(item)}
+            onMouseEnter={() => soundManager.playHover()}
             aria-label={`Filter by ${item.label}`}
             aria-pressed={Boolean(isActive)}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium shrink-0 transition-all duration-300 ${

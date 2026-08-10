@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { OrbitalNode } from '@/lib/nodes'
 import ProjectBackgroundGlobeWrapper from '@/components/scene/ProjectBackgroundGlobeWrapper'
 
+import { soundManager } from '@/lib/sound'
+
 interface ProjectDetailViewProps {
   node: OrbitalNode
   prevNode: OrbitalNode
@@ -26,12 +28,16 @@ export default function ProjectDetailView({ node, prevNode, nextNode }: ProjectD
     (targetUrl?: string) => {
       if (isExiting) return
       setIsExiting(true)
+      soundManager.playSwoop()
       setTimeout(() => {
         router.push(targetUrl || '/')
       }, 280)
     },
     [isExiting, router]
   )
+
+  const themeAccent = node.accentColor || '#38bdf8'
+  const gradientTextClass = node.gradientClass || 'from-cyan-400 via-blue-400 to-indigo-400'
 
   return (
     <main className="min-h-screen w-full bg-[#030712] text-white selection:bg-cyan-500/20 selection:text-cyan-300 relative overflow-x-hidden overflow-y-auto select-text">
@@ -40,9 +46,19 @@ export default function ProjectDetailView({ node, prevNode, nextNode }: ProjectD
         <ProjectBackgroundGlobeWrapper node={node} onZoomOut={() => handleExit('/')} />
       </div>
 
-      {/* Ambient gradient glows */}
-      <div className={`fixed top-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none z-0 transition-opacity duration-300 ${isExiting ? 'opacity-0' : 'opacity-100'}`} />
-      <div className={`fixed bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[140px] pointer-events-none z-0 transition-opacity duration-300 ${isExiting ? 'opacity-0' : 'opacity-100'}`} />
+      {/* Dynamic Ambient theme color glows */}
+      <div
+        style={{ backgroundColor: themeAccent }}
+        className={`fixed top-0 left-1/4 w-96 h-96 opacity-15 rounded-full blur-[140px] pointer-events-none z-0 transition-opacity duration-300 ${
+          isExiting ? 'opacity-0' : 'opacity-15'
+        }`}
+      />
+      <div
+        style={{ backgroundColor: themeAccent }}
+        className={`fixed bottom-0 right-1/4 w-96 h-96 opacity-15 rounded-full blur-[140px] pointer-events-none z-0 transition-opacity duration-300 ${
+          isExiting ? 'opacity-0' : 'opacity-15'
+        }`}
+      />
 
       {/* Top Navbar */}
       <header
@@ -112,11 +128,11 @@ export default function ProjectDetailView({ node, prevNode, nextNode }: ProjectD
           }`}
           style={{ animationDelay: isExiting ? '0ms' : '250ms' }}
         >
-          <span className="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono text-xs font-bold uppercase tracking-wider">
+          <span className="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 font-mono text-xs font-bold uppercase tracking-wider" style={{ color: themeAccent, borderColor: `${themeAccent}40` }}>
             {node.type}
           </span>
           <span className="text-white/40">•</span>
-          <span className="text-xs font-mono text-cyan-300 flex items-center gap-1.5">
+          <span className="text-xs font-mono flex items-center gap-1.5" style={{ color: themeAccent }}>
             <span>🌐</span> {node.continent}
           </span>
           <span className="text-white/40">•</span>
@@ -133,7 +149,7 @@ export default function ProjectDetailView({ node, prevNode, nextNode }: ProjectD
             }`}
             style={{ animationDelay: isExiting ? '0ms' : '300ms' }}
           >
-            <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-4">
+            <h1 className={`text-4xl sm:text-6xl font-extrabold tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-r ${gradientTextClass}`}>
               {node.label}
             </h1>
             <p className="text-lg sm:text-xl text-white/80 font-normal leading-relaxed">

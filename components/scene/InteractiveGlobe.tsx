@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Globe, { GlobeMethods } from 'react-globe.gl'
 import { NODES, GLOBE_ARCS, OrbitalNode } from '@/lib/nodes'
 import { useSceneStore } from '@/components/providers/SceneStateProvider'
+import { soundManager } from '@/lib/sound'
 
 export default function InteractiveGlobe() {
   const router = useRouter()
@@ -14,6 +15,7 @@ export default function InteractiveGlobe() {
 
   const activeNode = useSceneStore((state) => state.activeNode)
   const setActiveNode = useSceneStore((state) => state.setActiveNode)
+  const hoveredNode = useSceneStore((state) => state.hoveredNode)
   const setHoveredNode = useSceneStore((state) => state.setHoveredNode)
   const isZoomedOut = useSceneStore((state) => state.isZoomedOut)
   const setIsZoomedOut = useSceneStore((state) => state.setIsZoomedOut)
@@ -87,6 +89,7 @@ export default function InteractiveGlobe() {
         if (targetNode) {
           const navNode: OrbitalNode = targetNode
           isAnimatingCam.current = true
+          soundManager.playWarp()
           globeRef.current.pointOfView(
             { lat: navNode.lat, lng: navNode.lng, altitude: 2.1 },
             400
@@ -113,6 +116,7 @@ export default function InteractiveGlobe() {
       const currentPov = globeRef.current.pointOfView()
       if (isZoomedOut && currentPov.altitude < 3.2) {
         isAnimatingCam.current = true
+        soundManager.playWarp()
         globeRef.current.pointOfView(
           { lat: currentPov.lat, lng: currentPov.lng, altitude: 3.8 },
           1000
@@ -122,6 +126,7 @@ export default function InteractiveGlobe() {
         }, 1100)
       } else if (!isZoomedOut && currentPov.altitude >= 3.0) {
         isAnimatingCam.current = true
+        soundManager.playWarp()
         globeRef.current.pointOfView(
           { lat: currentPov.lat, lng: currentPov.lng, altitude: 2.1 },
           1000
@@ -142,6 +147,7 @@ export default function InteractiveGlobe() {
         controls.autoRotateSpeed = 0.75
       }
       if (activeNode) {
+        soundManager.playClick()
         globeRef.current.pointOfView(
           {
             lat: activeNode.lat,
@@ -156,6 +162,8 @@ export default function InteractiveGlobe() {
 
   const handlePointClick = (point: object) => {
     const node = point as OrbitalNode
+    soundManager.playClick()
+    soundManager.playWarp()
     if (globeRef.current) {
       isAnimatingCam.current = true
       globeRef.current.pointOfView(
@@ -165,6 +173,8 @@ export default function InteractiveGlobe() {
     }
     router.push(`/projects/${node.id}`)
   }
+
+  const activeThemeColor = activeNode?.accentColor || hoveredNode?.accentColor || '#38bdf8'
 
   return (
     <div ref={containerRef} className="absolute inset-0 w-full h-full bg-[#030712] overflow-hidden">
@@ -176,8 +186,8 @@ export default function InteractiveGlobe() {
         backgroundImageUrl="/textures/night-sky.png"
         globeImageUrl="/textures/earth-blue-marble.jpg"
         bumpImageUrl="/textures/earth-topology.png"
-        atmosphereColor="#38bdf8"
-        atmosphereAltitude={0.15}
+        atmosphereColor={activeThemeColor}
+        atmosphereAltitude={0.16}
         showAtmosphere={true}
         
         // Arc configuration (subtle connecting trajectories)
@@ -194,7 +204,7 @@ export default function InteractiveGlobe() {
         pointLat="lat"
         pointLng="lng"
         pointColor={(d: object) =>
-          (d as OrbitalNode).id === activeNode?.id ? '#ffffff' : '#38bdf8'
+          (d as OrbitalNode).accentColor || ((d as OrbitalNode).id === activeNode?.id ? '#ffffff' : '#38bdf8')
         }
         pointAltitude={0.03}
         pointRadius={(d: object) =>
@@ -202,13 +212,19 @@ export default function InteractiveGlobe() {
         }
         pointsMerge={false}
         onPointClick={handlePointClick}
-        onPointHover={(point) => setHoveredNode(point ? (point as OrbitalNode) : null)}
+        onPointHover={(point) => {
+          if (point) soundManager.playHover()
+          setHoveredNode(point ? (point as OrbitalNode) : null)
+        }}
 
         // Pulsing rings around active nodes
         ringsData={activeNode ? [activeNode] : NODES}
         ringLat="lat"
         ringLng="lng"
-        ringColor={() => (t: number) => `rgba(56, 189, 248, ${Math.max(0, 1 - t) * 0.7})`}
+        ringColor={(d: object) => {
+          const color = (d as OrbitalNode).accentColor || '#38bdf8'
+          return (t: number) => `${color}${Math.floor(Math.max(0, 1 - t) * 180).toString(16).padStart(2, '0')}`
+        }}
         ringMaxRadius={6}
         ringPropagationSpeed={2.5}
         ringRepeatPeriod={1400}
@@ -222,6 +238,7 @@ export default function InteractiveGlobe() {
         htmlElement={(d: object) => {
           const node = d as OrbitalNode
           const isActive = activeNode?.id === node.id
+          const themeAccent = node.accentColor || '#38bdf8'
 
           const el = document.createElement('div')
           el.setAttribute('role', 'button')
@@ -231,7 +248,7 @@ export default function InteractiveGlobe() {
             isActive
               ? 'border-cyan-400 shadow-[0_0_22px_rgba(56,189,248,0.7)] bg-[#0c162d]'
               : 'border-cyan-500/30 hover:border-cyan-400/80 hover:shadow-[0_0_15px_rgba(56,189,248,0.3)] shadow-lg'
-          } transition-colors duration-300 transform -translate-x-1/2 -translate-y-1/2 focus:outline-none focus:ring-2 focus:ring-cyan-400`
+          } transition-all duration-300 transform -translate-x-1/2 -translate-y-1/2 focus:outline-none focus:ring-2 focus:ring-cyan-400`
 
           const continentUpper = node.continent.toUpperCase()
 
@@ -239,10 +256,10 @@ export default function InteractiveGlobe() {
             <div class="w-5 h-5 rounded-md bg-[#0f172a] border ${
               isActive ? 'border-cyan-400' : 'border-cyan-500/40'
             } flex items-center justify-center shadow-inner group-hover:border-cyan-400 transition-colors">
-              <span class="w-2 h-2 rounded-sm bg-cyan-400 shadow-[0_0_6px_#38bdf8] group-hover:scale-125 transition-transform"></span>
+              <span class="w-2 h-2 rounded-sm group-hover:scale-125 transition-transform" style="background-color: ${themeAccent}; box-shadow: 0 0 8px ${themeAccent};"></span>
             </div>
             <div class="flex flex-col text-left">
-              <span class="text-[8px] font-mono tracking-widest text-cyan-400 font-semibold leading-none mb-0.5">${continentUpper}</span>
+              <span class="text-[8px] font-mono tracking-widest font-semibold leading-none mb-0.5" style="color: ${themeAccent};">${continentUpper}</span>
               <span class="text-[11px] font-bold text-white tracking-wide leading-tight group-hover:text-cyan-100">${node.label}</span>
             </div>
           `
@@ -264,6 +281,8 @@ export default function InteractiveGlobe() {
             e.preventDefault()
             e.stopPropagation()
             
+            soundManager.playClick()
+            soundManager.playWarp()
             if (globeRef.current) {
               isAnimatingCam.current = true
               globeRef.current.pointOfView(
@@ -284,7 +303,10 @@ export default function InteractiveGlobe() {
               triggerSelect(e)
             }
           }
-          el.onmouseenter = () => setHoveredNode(node)
+          el.onmouseenter = () => {
+            soundManager.playHover()
+            setHoveredNode(node)
+          }
           el.onmouseleave = () => setHoveredNode(null)
 
           return el
