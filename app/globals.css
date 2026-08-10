@@ -56,279 +56,176 @@ body {
   background: rgba(200, 240, 255, 0.4);
 }
 
-/* Card Screen-Depth Emergence & Implosion Animations (Coming out from screen center on zoom-in, collapsing back into screen on zoom-out) */
-@keyframes screenDepthInTop {
+/* Off-Screen Edge Sliding Animations (Matching User Profile Modal HUD Sliding Style) */
+@keyframes slideFromLeft {
   0% {
     opacity: 0;
-    transform: scale3d(0.4, 0.4, 0.4) translate3d(0, -60px, -150px);
-    filter: blur(8px);
+    transform: translate3d(-100vw, 0, 0);
   }
   100% {
     opacity: 1;
-    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
-    filter: blur(0px);
+    transform: translate3d(0, 0, 0);
   }
 }
 
-@keyframes screenDepthInBottom {
+@keyframes slideFromRight {
   0% {
     opacity: 0;
-    transform: scale3d(0.4, 0.4, 0.4) translate3d(0, 60px, -150px);
-    filter: blur(8px);
+    transform: translate3d(100vw, 0, 0);
   }
   100% {
     opacity: 1;
-    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
-    filter: blur(0px);
+    transform: translate3d(0, 0, 0);
   }
 }
 
-@keyframes screenDepthInLeft {
+@keyframes slideFromTop {
   0% {
     opacity: 0;
-    transform: scale3d(0.4, 0.4, 0.4) translate3d(-100px, 0, -150px);
-    filter: blur(8px);
+    transform: translate3d(0, -120px, 0);
   }
   100% {
     opacity: 1;
-    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
-    filter: blur(0px);
+    transform: translate3d(0, 0, 0);
   }
 }
 
-@keyframes screenDepthInRight {
+@keyframes slideFromBottom {
   0% {
     opacity: 0;
-    transform: scale3d(0.4, 0.4, 0.4) translate3d(100px, 0, -150px);
-    filter: blur(8px);
+    transform: translate3d(0, 120px, 0);
   }
   100% {
     opacity: 1;
-    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
-    filter: blur(0px);
+    transform: translate3d(0, 0, 0);
   }
 }
 
-@keyframes screenDepthInTopLeft {
-  0% {
-    opacity: 0;
-    transform: scale3d(0.35, 0.35, 0.35) translate3d(-90px, -60px, -150px);
-    filter: blur(8px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
-    filter: blur(0px);
-  }
-}
-
-@keyframes screenDepthInTopRight {
-  0% {
-    opacity: 0;
-    transform: scale3d(0.35, 0.35, 0.35) translate3d(90px, -60px, -150px);
-    filter: blur(8px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
-    filter: blur(0px);
-  }
-}
-
-@keyframes screenDepthInBottomLeft {
-  0% {
-    opacity: 0;
-    transform: scale3d(0.35, 0.35, 0.35) translate3d(-90px, 60px, -150px);
-    filter: blur(8px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
-    filter: blur(0px);
-  }
-}
-
-@keyframes screenDepthInBottomRight {
-  0% {
-    opacity: 0;
-    transform: scale3d(0.35, 0.35, 0.35) translate3d(90px, 60px, -150px);
-    filter: blur(8px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
-    filter: blur(0px);
-  }
-}
-
-/* 3D Holographic Screen-Depth Exit (Cards collapsing back INTO screen/globe on zoom-out) */
-@keyframes screenDepthOutTop {
+/* Exit Animations (Sliding back out off-screen) */
+@keyframes slideToLeft {
   0% {
     opacity: 1;
-    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
-    filter: blur(0px);
+    transform: translate3d(0, 0, 0);
   }
   100% {
     opacity: 0;
-    transform: scale3d(0.3, 0.3, 0.3) translate3d(0, -60px, -180px);
-    filter: blur(8px);
+    transform: translate3d(-100vw, 0, 0);
   }
 }
 
-@keyframes screenDepthOutBottom {
+@keyframes slideToRight {
   0% {
     opacity: 1;
-    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
-    filter: blur(0px);
+    transform: translate3d(0, 0, 0);
   }
   100% {
     opacity: 0;
-    transform: scale3d(0.3, 0.3, 0.3) translate3d(0, 60px, -180px);
-    filter: blur(8px);
+    transform: translate3d(100vw, 0, 0);
   }
 }
 
-@keyframes screenDepthOutLeft {
+@keyframes slideToTop {
   0% {
     opacity: 1;
-    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
-    filter: blur(0px);
+    transform: translate3d(0, 0, 0);
   }
   100% {
     opacity: 0;
-    transform: scale3d(0.3, 0.3, 0.3) translate3d(-100px, 0, -180px);
-    filter: blur(8px);
+    transform: translate3d(0, -120px, 0);
   }
 }
 
-@keyframes screenDepthOutRight {
+@keyframes slideToBottom {
   0% {
     opacity: 1;
-    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
-    filter: blur(0px);
+    transform: translate3d(0, 0, 0);
   }
   100% {
     opacity: 0;
-    transform: scale3d(0.3, 0.3, 0.3) translate3d(100px, 0, -180px);
-    filter: blur(8px);
+    transform: translate3d(0, 120px, 0);
   }
 }
 
-@keyframes screenDepthOutTopLeft {
-  0% {
-    opacity: 1;
-    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
-    filter: blur(0px);
-  }
-  100% {
-    opacity: 0;
-    transform: scale3d(0.3, 0.3, 0.3) translate3d(-90px, -60px, -180px);
-    filter: blur(8px);
-  }
+.animate-slide-left {
+  animation: slideFromLeft 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
 }
 
-@keyframes screenDepthOutTopRight {
-  0% {
-    opacity: 1;
-    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
-    filter: blur(0px);
-  }
-  100% {
-    opacity: 0;
-    transform: scale3d(0.3, 0.3, 0.3) translate3d(90px, -60px, -180px);
-    filter: blur(8px);
-  }
+.animate-slide-right {
+  animation: slideFromRight 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
 }
 
-@keyframes screenDepthOutBottomLeft {
-  0% {
-    opacity: 1;
-    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
-    filter: blur(0px);
-  }
-  100% {
-    opacity: 0;
-    transform: scale3d(0.3, 0.3, 0.3) translate3d(-90px, 60px, -180px);
-    filter: blur(8px);
-  }
+.animate-slide-top {
+  animation: slideFromTop 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
 }
 
-@keyframes screenDepthOutBottomRight {
-  0% {
-    opacity: 1;
-    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
-    filter: blur(0px);
-  }
-  100% {
-    opacity: 0;
-    transform: scale3d(0.3, 0.3, 0.3) translate3d(90px, 60px, -180px);
-    filter: blur(8px);
-  }
+.animate-slide-bottom {
+  animation: slideFromBottom 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
 }
 
+.animate-slide-exit-left {
+  animation: slideToLeft 0.45s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards !important;
+  will-change: transform, opacity;
+}
+
+.animate-slide-exit-right {
+  animation: slideToRight 0.45s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards !important;
+  will-change: transform, opacity;
+}
+
+.animate-slide-exit-top {
+  animation: slideToTop 0.4s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards !important;
+  will-change: transform, opacity;
+}
+
+.animate-slide-exit-bottom {
+  animation: slideToBottom 0.4s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards !important;
+  will-change: transform, opacity;
+}
+
+/* Backwards compatibility animation helper classes */
 .animate-card-top {
-  animation: screenDepthInTop 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-  will-change: transform, opacity, filter;
+  animation: slideFromTop 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
 }
 .animate-card-bottom {
-  animation: screenDepthInBottom 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-  will-change: transform, opacity, filter;
+  animation: slideFromBottom 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
 }
-.animate-card-left {
-  animation: screenDepthInLeft 0.52s cubic-bezier(0.16, 1, 0.3, 1) both;
-  will-change: transform, opacity, filter;
-}
-.animate-card-right {
-  animation: screenDepthInRight 0.52s cubic-bezier(0.16, 1, 0.3, 1) both;
-  will-change: transform, opacity, filter;
-}
-.animate-card-top-left {
-  animation: screenDepthInTopLeft 0.52s cubic-bezier(0.16, 1, 0.3, 1) both;
-  will-change: transform, opacity, filter;
-}
-.animate-card-top-right {
-  animation: screenDepthInTopRight 0.52s cubic-bezier(0.16, 1, 0.3, 1) both;
-  will-change: transform, opacity, filter;
-}
+.animate-card-left,
+.animate-card-top-left,
 .animate-card-bottom-left {
-  animation: screenDepthInBottomLeft 0.52s cubic-bezier(0.16, 1, 0.3, 1) both;
-  will-change: transform, opacity, filter;
+  animation: slideFromLeft 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
 }
+.animate-card-right,
+.animate-card-top-right,
 .animate-card-bottom-right {
-  animation: screenDepthInBottomRight 0.52s cubic-bezier(0.16, 1, 0.3, 1) both;
-  will-change: transform, opacity, filter;
+  animation: slideFromRight 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
 }
 
 .animate-card-exit-top {
-  animation: screenDepthOutTop 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-  will-change: transform, opacity, filter;
+  animation: slideToTop 0.4s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards !important;
+  will-change: transform, opacity;
 }
 .animate-card-exit-bottom {
-  animation: screenDepthOutBottom 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-  will-change: transform, opacity, filter;
+  animation: slideToBottom 0.4s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards !important;
+  will-change: transform, opacity;
 }
-.animate-card-exit-left {
-  animation: screenDepthOutLeft 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-  will-change: transform, opacity, filter;
-}
-.animate-card-exit-right {
-  animation: screenDepthOutRight 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-  will-change: transform, opacity, filter;
-}
-.animate-card-exit-top-left {
-  animation: screenDepthOutTopLeft 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-  will-change: transform, opacity, filter;
-}
-.animate-card-exit-top-right {
-  animation: screenDepthOutTopRight 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-  will-change: transform, opacity, filter;
-}
+.animate-card-exit-left,
+.animate-card-exit-top-left,
 .animate-card-exit-bottom-left {
-  animation: screenDepthOutBottomLeft 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-  will-change: transform, opacity, filter;
+  animation: slideToLeft 0.45s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards !important;
+  will-change: transform, opacity;
 }
+.animate-card-exit-right,
+.animate-card-exit-top-right,
 .animate-card-exit-bottom-right {
-  animation: screenDepthOutBottomRight 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-  will-change: transform, opacity, filter;
+  animation: slideToRight 0.45s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards !important;
+  will-change: transform, opacity;
 }
 

@@ -165,22 +165,11 @@ export default function ProjectDetailView({ node, prevNode, nextNode }: ProjectD
         {node.metrics && node.metrics.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
             {node.metrics.map((metric, idx) => {
-              const inClasses = [
-                'animate-card-top-left',
-                'animate-card-top-right',
-                'animate-card-bottom-left',
-                'animate-card-bottom-right'
-              ]
-              const outClasses = [
-                'animate-card-exit-top-left',
-                'animate-card-exit-top-right',
-                'animate-card-exit-bottom-left',
-                'animate-card-exit-bottom-right'
-              ]
+              const isRightSide = idx % 2 !== 0
               const animClass = isExiting
-                ? outClasses[idx % outClasses.length]
-                : inClasses[idx % inClasses.length]
-              const delay = isExiting ? 0 : 400 + idx * 60
+                ? isRightSide ? 'animate-slide-exit-right' : 'animate-slide-exit-left'
+                : isRightSide ? 'animate-slide-right' : 'animate-slide-left'
+              const delay = isExiting ? 0 : 350 + idx * 50
               return (
                 <div
                   key={idx}
