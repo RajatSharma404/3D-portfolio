@@ -36,6 +36,11 @@ export default function InteractiveGlobe() {
     return () => window.removeEventListener('resize', updateSize)
   }, [])
 
+  // Prefetch all project routes for zero-lag instant page loading
+  useEffect(() => {
+    NODES.forEach((n) => router.prefetch(`/projects/${n.id}`))
+  }, [router])
+
   // Initial camera placement on load
   useEffect(() => {
     if (globeRef.current) {
@@ -83,12 +88,10 @@ export default function InteractiveGlobe() {
           const navNode: OrbitalNode = targetNode
           isAnimatingCam.current = true
           globeRef.current.pointOfView(
-            { lat: navNode.lat, lng: navNode.lng, altitude: 0.65 },
-            400
+            { lat: navNode.lat, lng: navNode.lng, altitude: 0.6 },
+            300
           )
-          setTimeout(() => {
-            router.push(`/projects/${navNode.id}`)
-          }, 250)
+          router.push(`/projects/${navNode.id}`)
           return
         }
       }
@@ -156,15 +159,11 @@ export default function InteractiveGlobe() {
     if (globeRef.current) {
       isAnimatingCam.current = true
       globeRef.current.pointOfView(
-        { lat: node.lat, lng: node.lng, altitude: 0.65 },
-        500
+        { lat: node.lat, lng: node.lng, altitude: 0.6 },
+        300
       )
-      setTimeout(() => {
-        router.push(`/projects/${node.id}`)
-      }, 350)
-    } else {
-      router.push(`/projects/${node.id}`)
     }
+    router.push(`/projects/${node.id}`)
   }
 
   return (
@@ -268,15 +267,11 @@ export default function InteractiveGlobe() {
             if (globeRef.current) {
               isAnimatingCam.current = true
               globeRef.current.pointOfView(
-                { lat: node.lat, lng: node.lng, altitude: 0.65 },
-                500
+                { lat: node.lat, lng: node.lng, altitude: 0.6 },
+                300
               )
-              setTimeout(() => {
-                router.push(`/projects/${node.id}`)
-              }, 350)
-            } else {
-              router.push(`/projects/${node.id}`)
             }
+            router.push(`/projects/${node.id}`)
           }
 
           el.ondblclick = triggerSelect

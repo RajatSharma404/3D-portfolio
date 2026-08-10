@@ -15,13 +15,20 @@ export default function ProjectDetailView({ node, prevNode, nextNode }: ProjectD
   const router = useRouter()
   const [isExiting, setIsExiting] = useState(false)
 
+  // Prefetch home and neighboring project routes for zero-lag instant navigation
+  React.useEffect(() => {
+    router.prefetch('/')
+    router.prefetch(`/projects/${prevNode.id}`)
+    router.prefetch(`/projects/${nextNode.id}`)
+  }, [router, prevNode.id, nextNode.id])
+
   const handleExit = useCallback(
     (targetUrl?: string) => {
       if (isExiting) return
       setIsExiting(true)
       setTimeout(() => {
         router.push(targetUrl || '/')
-      }, 450)
+      }, 280)
     },
     [isExiting, router]
   )
