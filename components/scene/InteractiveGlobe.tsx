@@ -80,7 +80,15 @@ export default function InteractiveGlobe() {
           })
         }
         if (targetNode) {
-          router.push(`/projects/${targetNode.id}`)
+          const navNode: OrbitalNode = targetNode
+          isAnimatingCam.current = true
+          globeRef.current.pointOfView(
+            { lat: navNode.lat, lng: navNode.lng, altitude: 0.65 },
+            400
+          )
+          setTimeout(() => {
+            router.push(`/projects/${navNode.id}`)
+          }, 250)
           return
         }
       }
@@ -145,7 +153,18 @@ export default function InteractiveGlobe() {
 
   const handlePointClick = (point: object) => {
     const node = point as OrbitalNode
-    router.push(`/projects/${node.id}`)
+    if (globeRef.current) {
+      isAnimatingCam.current = true
+      globeRef.current.pointOfView(
+        { lat: node.lat, lng: node.lng, altitude: 0.65 },
+        500
+      )
+      setTimeout(() => {
+        router.push(`/projects/${node.id}`)
+      }, 350)
+    } else {
+      router.push(`/projects/${node.id}`)
+    }
   }
 
   return (
@@ -246,14 +265,21 @@ export default function InteractiveGlobe() {
             e.preventDefault()
             e.stopPropagation()
             
-            router.push(`/projects/${node.id}`)
+            if (globeRef.current) {
+              isAnimatingCam.current = true
+              globeRef.current.pointOfView(
+                { lat: node.lat, lng: node.lng, altitude: 0.65 },
+                500
+              )
+              setTimeout(() => {
+                router.push(`/projects/${node.id}`)
+              }, 350)
+            } else {
+              router.push(`/projects/${node.id}`)
+            }
           }
 
-          el.ondblclick = (e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            router.push(`/projects/${node.id}`)
-          }
+          el.ondblclick = triggerSelect
 
           el.onclick = triggerSelect
           el.ontouchend = triggerSelect
