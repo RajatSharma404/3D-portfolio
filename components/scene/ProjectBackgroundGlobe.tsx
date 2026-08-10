@@ -37,14 +37,14 @@ export default function ProjectBackgroundGlobe({ node, onZoomOut }: ProjectBackg
     redirectingRef.current = false
 
     if (globeRef.current) {
-      // Focus globe on target project coordinates
+      // Focus globe on target project coordinates matching SS 2 size
       globeRef.current.pointOfView(
         {
           lat: node.lat,
           lng: node.lng,
-          altitude: 1.6
+          altitude: 2.1
         },
-        1200
+        1000
       )
 
       // Grace period: Only enable zoom-out detection after initial camera animation finishes

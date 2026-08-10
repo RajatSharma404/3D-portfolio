@@ -68,8 +68,8 @@ export default function InteractiveGlobe() {
       const pov = globeRef.current.pointOfView()
       if (!pov || typeof pov.altitude !== 'number') return
 
-      // Zoom-in auto-redirection: trigger when camera altitude < 0.85
-      if (pov.altitude < 0.85) {
+      // Zoom-in auto-redirection: trigger when camera altitude < 1.45
+      if (pov.altitude < 1.45) {
         isNavigatingRef.current = true
         const currentActive = useSceneStore.getState().activeNode
         
@@ -88,8 +88,8 @@ export default function InteractiveGlobe() {
           const navNode: OrbitalNode = targetNode
           isAnimatingCam.current = true
           globeRef.current.pointOfView(
-            { lat: navNode.lat, lng: navNode.lng, altitude: 0.6 },
-            300
+            { lat: navNode.lat, lng: navNode.lng, altitude: 2.1 },
+            400
           )
           router.push(`/projects/${navNode.id}`)
           return
@@ -146,9 +146,9 @@ export default function InteractiveGlobe() {
           {
             lat: activeNode.lat,
             lng: activeNode.lng,
-            altitude: 1.8
+            altitude: 2.1
           },
-          1400
+          1000
         )
       }
     }
@@ -159,8 +159,8 @@ export default function InteractiveGlobe() {
     if (globeRef.current) {
       isAnimatingCam.current = true
       globeRef.current.pointOfView(
-        { lat: node.lat, lng: node.lng, altitude: 0.6 },
-        300
+        { lat: node.lat, lng: node.lng, altitude: 2.1 },
+        400
       )
     }
     router.push(`/projects/${node.id}`)
@@ -267,8 +267,8 @@ export default function InteractiveGlobe() {
             if (globeRef.current) {
               isAnimatingCam.current = true
               globeRef.current.pointOfView(
-                { lat: node.lat, lng: node.lng, altitude: 0.6 },
-                300
+                { lat: node.lat, lng: node.lng, altitude: 2.1 },
+                400
               )
             }
             router.push(`/projects/${node.id}`)
