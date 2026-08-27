@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { OrbitalNode } from '@/lib/nodes'
 import { soundManager } from '@/lib/sound'
+import ProjectInteractiveDemo from '@/components/ui/ProjectInteractiveDemo'
 
 interface ProjectMediaGalleryProps {
   node: OrbitalNode
@@ -33,50 +34,68 @@ export default function ProjectMediaGallery({ node }: ProjectMediaGalleryProps) 
   ]
 
   return (
-    <div className="my-10 pt-8 border-t border-white/10 select-none">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="font-mono text-sm tracking-widest uppercase font-bold flex items-center gap-2" style={{ color: accentColor }}>
-          <span>📸</span> VISUAL ARCHITECTURE & SCREENSHOTS
-        </h2>
-        <span className="text-xs font-mono text-white/50">Click card for preview</span>
-      </div>
+    <div className="my-10 pt-8 border-t border-white/10 select-none space-y-8">
+      {/* 1. Interactive Live Sandbox Section */}
+      <section className="p-6 sm:p-8 rounded-3xl bg-[#080d19]/90 border border-cyan-500/30 backdrop-blur-2xl shadow-2xl space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-white/10">
+          <h2 className="font-mono text-xs sm:text-sm tracking-widest uppercase font-bold flex items-center gap-2" style={{ color: accentColor }}>
+            <span>⚡</span> INTERACTIVE PLAYGROUND & LIVE SIMULATOR
+          </h2>
+          <span className="text-[10px] font-mono text-cyan-400 bg-cyan-400/10 px-2 py-0.5 rounded-full border border-cyan-400/30">
+            Live Interactive
+          </span>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {galleryItems.map((item, idx) => (
-          <div
-            key={idx}
-            onClick={() => {
-              soundManager.playClick()
-              setActiveMedia(item)
-            }}
-            onMouseEnter={() => soundManager.playHover()}
-            className="group relative p-5 rounded-2xl bg-[#080d19]/80 border border-white/10 hover:border-cyan-400/60 backdrop-blur-xl transition-all duration-300 cursor-pointer shadow-lg hover:shadow-[0_0_25px_rgba(56,189,248,0.2)] flex flex-col justify-between"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span
-                  className="px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase border"
-                  style={{ color: accentColor, borderColor: `${accentColor}40`, backgroundColor: `${accentColor}15` }}
-                >
-                  {item.category}
-                </span>
-                <span className="text-xs text-white/40 group-hover:text-cyan-300 transition-colors">🔍 Preview</span>
+        {/* Embedded Interactive Demo Component */}
+        <ProjectInteractiveDemo projectId={node.id} accentColor={accentColor} />
+      </section>
+
+      {/* 2. Visual Architecture & Screenshot Inspection Cards */}
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-mono text-xs sm:text-sm tracking-widest uppercase font-bold flex items-center gap-2" style={{ color: accentColor }}>
+            <span>📸</span> VISUAL ARCHITECTURE & BLUEPRINTS
+          </h3>
+          <span className="text-xs font-mono text-white/50">Click card for deep inspection</span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {galleryItems.map((item, idx) => (
+            <div
+              key={idx}
+              onClick={() => {
+                soundManager.playClick()
+                setActiveMedia(item)
+              }}
+              onMouseEnter={() => soundManager.playHover()}
+              className="group relative p-5 rounded-2xl bg-[#080d19]/80 border border-white/10 hover:border-cyan-400/60 backdrop-blur-xl transition-all duration-300 cursor-pointer shadow-lg hover:shadow-[0_0_25px_rgba(56,189,248,0.2)] flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span
+                    className="px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase border"
+                    style={{ color: accentColor, borderColor: `${accentColor}40`, backgroundColor: `${accentColor}15` }}
+                  >
+                    {item.category}
+                  </span>
+                  <span className="text-xs text-white/40 group-hover:text-cyan-300 transition-colors">🔍 Preview</span>
+                </div>
+                <h4 className="text-base font-bold text-white mb-2 group-hover:text-cyan-200 transition-colors">
+                  {item.title}
+                </h4>
+                <p className="text-xs text-white/70 leading-relaxed line-clamp-2">
+                  {item.description}
+                </p>
               </div>
-              <h3 className="text-base font-bold text-white mb-2 group-hover:text-cyan-200 transition-colors">
-                {item.title}
-              </h3>
-              <p className="text-xs text-white/70 leading-relaxed line-clamp-2">
-                {item.description}
-              </p>
-            </div>
 
-            <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-white/40">
-              <span>{node.label} v1.0</span>
-              <span className="text-cyan-400 font-bold group-hover:translate-x-1 transition-transform">Inspect →</span>
+              <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-white/40">
+                <span>{node.label} v1.0</span>
+                <span className="text-cyan-400 font-bold group-hover:translate-x-1 transition-transform">Inspect →</span>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </section>
 
       {/* Lightbox Modal */}
       {activeMedia && (
@@ -98,6 +117,7 @@ export default function ProjectMediaGallery({ node }: ProjectMediaGalleryProps) 
               </span>
               <button
                 onClick={() => setActiveMedia(null)}
+                aria-label="Close media preview modal"
                 className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition-colors cursor-pointer"
               >
                 ✕
@@ -122,6 +142,7 @@ export default function ProjectMediaGallery({ node }: ProjectMediaGalleryProps) 
             <div className="mt-6 flex justify-end">
               <button
                 onClick={() => setActiveMedia(null)}
+                aria-label="Close architecture blueprint modal"
                 className="px-5 py-2 rounded-full bg-cyan-400 text-slate-950 font-bold text-xs hover:bg-cyan-300 transition-colors cursor-pointer"
               >
                 Close Blueprint
