@@ -38,6 +38,7 @@ export default function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
           <div className="flex items-center gap-3">
             <button
               onClick={handleDownload}
+              aria-label="Download official developer resume PDF"
               className="px-4 py-1.5 rounded-full bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-xs transition-all flex items-center gap-1.5 shadow-[0_0_15px_rgba(56,189,248,0.4)] cursor-pointer"
             >
               <span>📄</span>
@@ -45,6 +46,7 @@ export default function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
             </button>
             <button
               onClick={onClose}
+              aria-label="Close resume modal"
               className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition-colors cursor-pointer"
             >
               ✕
@@ -126,6 +128,7 @@ export default function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
           <span className="text-xs font-mono text-white/40">rajat.sharma.myid1@gmail.com</span>
           <button
             onClick={handleDownload}
+            aria-label="Open full PDF resume in new tab"
             className="px-5 py-2 rounded-full bg-cyan-400 text-slate-950 font-bold text-xs hover:bg-cyan-300 transition-colors cursor-pointer"
           >
             Open Full PDF →
