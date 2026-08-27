@@ -10,6 +10,12 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://portfolio-chi-self-31.vercel.app'),
   title: 'Rajat Sharma — Interactive 3D Earth Portfolio',
   description: 'Interactive 3D Earth Portfolio showcasing full-stack applications, AI integrations, and WebGL graphics built by Rajat Sharma (Co-Founder @ Pradite™).',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Rajat Sharma 3D'
+  },
   keywords: [
     'Rajat Sharma',
     'Full Stack Developer',
@@ -88,6 +94,11 @@ export default function RootLayout({
   return (
     <html lang="en" className="antialiased dark">
       <head>
+        <meta name="theme-color" content="#050508" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <link rel="preload" as="image" href="/textures/earth-blue-marble.jpg" />
+        <link rel="preload" as="image" href="/textures/earth-topology.png" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData) }}
