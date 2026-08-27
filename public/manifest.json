@@ -1,0 +1,25 @@
+{
+  "name": "Rajat Sharma — Interactive 3D Earth Portfolio",
+  "short_name": "Rajat Sharma 3D",
+  "description": "Interactive 3D Earth Portfolio showcasing full-stack applications, AI integrations, and WebGL graphics built by Rajat Sharma (Co-Founder @ Pradite™).",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050508",
+  "theme_color": "#38bdf8",
+  "orientation": "any",
+  "categories": ["portfolio", "developer", "technology", "ai"],
+  "icons": [
+    {
+      "src": "/textures/earth-blue-marble.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/textures/earth-blue-marble.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
