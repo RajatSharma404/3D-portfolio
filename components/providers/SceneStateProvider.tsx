@@ -13,6 +13,12 @@ interface SceneState {
   setIsLoaded: (v: boolean) => void
   isZoomedOut: boolean
   setIsZoomedOut: (v: boolean) => void
+  isTourActive: boolean
+  setIsTourActive: (v: boolean) => void
+  tourIndex: number
+  setTourIndex: (idx: number) => void
+  isTourPaused: boolean
+  setIsTourPaused: (v: boolean) => void
 }
 
 export const useSceneStore = create<SceneState>()((set) => ({
@@ -23,7 +29,13 @@ export const useSceneStore = create<SceneState>()((set) => ({
   isLoaded: false,
   setIsLoaded: (v) => set({ isLoaded: v }),
   isZoomedOut: false,
-  setIsZoomedOut: (v) => set({ isZoomedOut: v })
+  setIsZoomedOut: (v) => set({ isZoomedOut: v }),
+  isTourActive: false,
+  setIsTourActive: (v) => set({ isTourActive: v }),
+  tourIndex: 0,
+  setTourIndex: (idx) => set({ tourIndex: idx }),
+  isTourPaused: false,
+  setIsTourPaused: (v) => set({ isTourPaused: v })
 }))
 
 export default function SceneStateProvider({ children }: { children: React.ReactNode }) {
