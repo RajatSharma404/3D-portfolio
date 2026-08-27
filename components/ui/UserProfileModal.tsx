@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import gsap from 'gsap'
 import { useSceneStore } from '@/components/providers/SceneStateProvider'
@@ -9,6 +9,9 @@ export default function UserProfileModal() {
   const leftPanelRef = useRef<HTMLDivElement>(null)
   const rightPanelRef = useRef<HTMLDivElement>(null)
   const centerPromptRef = useRef<HTMLDivElement>(null)
+  const mobileSheetRef = useRef<HTMLDivElement>(null)
+
+  const [mobileTab, setMobileTab] = useState<'bio' | 'stack' | 'experience' | 'projects'>('bio')
 
   const isZoomedOut = useSceneStore((state) => state.isZoomedOut)
   const setIsZoomedOut = useSceneStore((state) => state.setIsZoomedOut)
@@ -29,39 +32,32 @@ export default function UserProfileModal() {
     const leftEl = leftPanelRef.current
     const rightEl = rightPanelRef.current
     const centerEl = centerPromptRef.current
-
-    if (!leftEl || !rightEl || !centerEl) return
+    const mobileEl = mobileSheetRef.current
 
     if (isZoomedOut) {
       // Entrance TL
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
       
-      tl.to([leftEl, rightEl], {
-        pointerEvents: 'auto'
-      })
-      .fromTo(
-        leftEl,
-        { x: -500, opacity: 0 },
-        { x: 0, opacity: 1, duration: 0.65 },
-        0
-      )
-      .fromTo(
-        rightEl,
-        { x: 500, opacity: 0 },
-        { x: 0, opacity: 1, duration: 0.65 },
-        0.1
-      )
-      .fromTo(
-        centerEl,
-        { y: -30, opacity: 0, scale: 0.9 },
-        { y: 0, opacity: 1, scale: 1, duration: 0.5, pointerEvents: 'auto' },
-        0.3
-      )
+      if (leftEl && rightEl) {
+        tl.to([leftEl, rightEl], { pointerEvents: 'auto' })
+          .fromTo(leftEl, { x: -500, opacity: 0 }, { x: 0, opacity: 1, duration: 0.65 }, 0)
+          .fromTo(rightEl, { x: 500, opacity: 0 }, { x: 0, opacity: 1, duration: 0.65 }, 0.1)
+      }
+
+      if (mobileEl) {
+        tl.to(mobileEl, { pointerEvents: 'auto' })
+          .fromTo(mobileEl, { y: 100, opacity: 0 }, { y: 0, opacity: 1, duration: 0.55 }, 0)
+      }
+
+      if (centerEl) {
+        tl.fromTo(centerEl, { y: -30, opacity: 0, scale: 0.9 }, { y: 0, opacity: 1, scale: 1, duration: 0.5, pointerEvents: 'auto' }, 0.25)
+      }
     } else {
       // Exit TL
-      gsap.to(leftEl, { x: -500, opacity: 0, duration: 0.45, ease: 'power2.in', pointerEvents: 'none' })
-      gsap.to(rightEl, { x: 500, opacity: 0, duration: 0.45, ease: 'power2.in', pointerEvents: 'none' })
-      gsap.to(centerEl, { y: -20, opacity: 0, duration: 0.3, ease: 'power2.in', pointerEvents: 'none' })
+      if (leftEl) gsap.to(leftEl, { x: -500, opacity: 0, duration: 0.45, ease: 'power2.in', pointerEvents: 'none' })
+      if (rightEl) gsap.to(rightEl, { x: 500, opacity: 0, duration: 0.45, ease: 'power2.in', pointerEvents: 'none' })
+      if (mobileEl) gsap.to(mobileEl, { y: 100, opacity: 0, duration: 0.4, ease: 'power2.in', pointerEvents: 'none' })
+      if (centerEl) gsap.to(centerEl, { y: -20, opacity: 0, duration: 0.3, ease: 'power2.in', pointerEvents: 'none' })
     }
   }, [isZoomedOut])
 
@@ -85,15 +81,237 @@ export default function UserProfileModal() {
           <span>→</span>
         </button>
       </div>
-
+      
       {/* Main Content Layout Container */}
       <div className="relative w-full h-full p-4 sm:p-6 flex flex-col md:flex-row justify-between pointer-events-none overflow-hidden">
         
+        {/* ========================================================================= */}
+        {/* MOBILE VIEW (< 768px): Unified Glassmorphic Tabbed Bottom Sheet */}
+        {/* ========================================================================= */}
+        <div
+          ref={mobileSheetRef}
+          style={{ opacity: 0, transform: 'translateY(100px)', pointerEvents: 'none' }}
+          className="flex md:hidden flex-col w-full h-full max-h-[92vh] mt-auto bg-[#080d19]/95 border border-cyan-500/30 rounded-3xl p-5 shadow-[0_0_50px_rgba(0,0,0,0.9)] backdrop-blur-2xl text-white pointer-events-auto overflow-hidden"
+        >
+          {/* Mobile Sheet Header */}
+          <div className="flex items-center justify-between pb-3 border-b border-white/10 shrink-0">
+            <div>
+              <h2 className="text-xl font-extrabold text-white leading-tight">Rajat Sharma</h2>
+              <p className="text-[11px] text-cyan-400 font-medium">Co-Founder @ Pradite™ · Full-Stack & AI</p>
+            </div>
+            <button
+              onClick={() => setIsZoomedOut(false)}
+              aria-label="Close profile modal and zoom into globe"
+              className="w-8 h-8 rounded-full bg-white/10 hover:bg-cyan-500/20 hover:border-cyan-400 border border-white/20 flex items-center justify-center text-white/70 hover:text-white transition-all text-sm cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* Mobile Tab Selector */}
+          <div className="flex items-center gap-1.5 py-2.5 overflow-x-auto scrollbar-none border-b border-white/10 shrink-0">
+            {[
+              { id: 'bio', label: '👤 Bio & Mission' },
+              { id: 'stack', label: '⚡ Tech Stack' },
+              { id: 'experience', label: '💼 Work History' },
+              { id: 'projects', label: '🚀 Projects' }
+            ].map((tab) => {
+              const isActive = mobileTab === tab.id
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setMobileTab(tab.id as typeof mobileTab)}
+                  aria-label={`View ${tab.label}`}
+                  className={`px-3 py-1 rounded-full text-xs font-mono font-bold shrink-0 transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-cyan-400 text-slate-950 shadow-[0_0_12px_rgba(56,189,248,0.4)]'
+                      : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              )
+            })}
+          </div>
+
+          {/* Mobile Tab Content Scrollable Area */}
+          <div className="flex-1 overflow-y-auto py-4 space-y-4 scrollbar-thin scrollbar-thumb-cyan-500/20 select-text">
+            {/* TAB 1: BIO & ABOUT */}
+            {mobileTab === 'bio' && (
+              <div className="space-y-4">
+                {/* Social & External Links */}
+                <div className="flex flex-wrap gap-1.5 pb-3 border-b border-white/10">
+                  <a
+                    href="https://pradite.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2.5 py-1 rounded-lg bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 text-xs font-bold flex items-center gap-1"
+                  >
+                    <span>🌐 Pradite.com</span>
+                    <span>↗</span>
+                  </a>
+                  <a
+                    href="https://github.com/RajatSharma404"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2.5 py-1 rounded-lg bg-white/10 border border-white/20 text-white text-xs font-semibold"
+                  >
+                    GitHub ↗
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/in/rajat-sharma-9a053128b/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2.5 py-1 rounded-lg bg-[#0A66C2]/20 border border-[#0A66C2]/50 text-[#0A66C2] text-xs font-semibold"
+                  >
+                    LinkedIn ↗
+                  </a>
+                  <a
+                    href="https://leetcode.com/u/RajatSharma404/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2.5 py-1 rounded-lg bg-[#FFA116]/20 border border-[#FFA116]/50 text-[#FFA116] text-xs font-semibold"
+                  >
+                    LeetCode ↗
+                  </a>
+                  <a
+                    href="mailto:rajat.sharma.myid1@gmail.com"
+                    className="px-2.5 py-1 rounded-lg bg-[#EA4335]/20 border border-[#EA4335]/50 text-[#EA4335] text-xs font-semibold"
+                  >
+                    Email ✉
+                  </a>
+                </div>
+
+                <p className="text-xs text-white/85 leading-relaxed italic border-l-2 border-cyan-400 pl-3">
+                  &ldquo;I build portfolio-grade full-stack apps, AI utilities, and DSA tools while studying Computer Science. The goal is simple: ship useful products, not just polished screens.&rdquo;
+                </p>
+
+                <ul className="space-y-2 text-xs text-white/80">
+                  <li className="flex items-start gap-2">
+                    <span className="text-cyan-400">🔨</span>
+                    <span>Building at <a href="https://pradite.com" target="_blank" rel="noopener noreferrer" className="text-cyan-300 font-bold underline">Pradite™</a> — privacy-first AI developer utilities.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-cyan-400">🎓</span>
+                    <span>Final-year B.Tech CS @ <strong>Kanpur Institute of Technology</strong> (AKTU · 2023–2027 · CGPA 7.2).</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-cyan-400">🤖</span>
+                    <span>Specialized in agentic AI pipelines, Express 5, Prisma ORM, and PostgreSQL.</span>
+                  </li>
+                </ul>
+              </div>
+            )}
+
+            {/* TAB 2: TECH STACK */}
+            {mobileTab === 'stack' && (
+              <div className="space-y-4">
+                <div>
+                  <span className="font-mono text-[10px] text-white/40 uppercase block mb-1.5 font-bold">Languages</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['C++', 'Python', 'TypeScript', 'JavaScript', 'SQL', 'HTML5/CSS3'].map((t) => (
+                      <span key={t} className="px-2.5 py-1 rounded-md bg-cyan-400/10 border border-cyan-400/30 text-cyan-300 font-mono text-[11px]">{t}</span>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <span className="font-mono text-[10px] text-white/40 uppercase block mb-1.5 font-bold">Frontend Frameworks</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['React 19', 'Next.js 16', 'Tailwind CSS 4', 'Three.js', 'ReactFlow', 'Monaco Editor'].map((t) => (
+                      <span key={t} className="px-2.5 py-1 rounded-md bg-white/10 border border-white/20 text-white font-mono text-[11px]">{t}</span>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <span className="font-mono text-[10px] text-white/40 uppercase block mb-1.5 font-bold">Backend & DB</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['Node.js', 'Express 5', 'FastAPI', 'PostgreSQL', 'Prisma ORM', 'Redis'].map((t) => (
+                      <span key={t} className="px-2.5 py-1 rounded-md bg-emerald-400/10 border border-emerald-400/30 text-emerald-300 font-mono text-[11px]">{t}</span>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <span className="font-mono text-[10px] text-white/40 uppercase block mb-1.5 font-bold">AI / ML Integration</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['Gemini 2.0 Flash', 'Stockfish 17 WASM', 'LLM Agent Pipelines', 'Ollama'].map((t) => (
+                      <span key={t} className="px-2.5 py-1 rounded-md bg-purple-400/10 border border-purple-400/30 text-purple-300 font-mono text-[11px]">{t}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 3: WORK HISTORY */}
+            {mobileTab === 'experience' && (
+              <div className="space-y-4">
+                <div className="border-l-2 border-cyan-400 pl-3 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-bold text-white text-xs">Co-Founder & Frontend Engineer</h3>
+                    <span className="font-mono text-[9px] text-cyan-400 bg-cyan-400/10 px-1.5 py-0.5 rounded">2026 – Present</span>
+                  </div>
+                  <p className="text-xs text-cyan-300 font-semibold">Pradite™ (pradite.com)</p>
+                  <p className="text-[11px] text-white/70">Architecting high-performance frontend interfaces for AI developer utilities.</p>
+                </div>
+
+                <div className="border-l-2 border-white/30 pl-3 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-bold text-white text-xs">Software Engineer Intern</h3>
+                    <span className="font-mono text-[9px] text-white/50 bg-white/5 px-1.5 py-0.5 rounded">May – Jul 2026</span>
+                  </div>
+                  <p className="text-xs text-white/60">Sparqor Technologies</p>
+                  <p className="text-[11px] text-white/70">Built scalable web components and modular application features.</p>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 4: PROJECTS */}
+            {mobileTab === 'projects' && (
+              <div className="space-y-3">
+                <Link
+                  href="/projects/flow"
+                  className="block p-3 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400 transition-all"
+                >
+                  <h4 className="font-bold text-white text-xs mb-1">Flow — AI Expense Tracker</h4>
+                  <p className="text-[11px] text-white/70">Next.js 15, Gemini API, Prisma ORM</p>
+                </Link>
+                <Link
+                  href="/projects/mastermind"
+                  className="block p-3 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400 transition-all"
+                >
+                  <h4 className="font-bold text-white text-xs mb-1">MasterMind — Chess AI Coach</h4>
+                  <p className="text-[11px] text-white/70">Stockfish 17 WASM, Gemini 2.0, FastAPI</p>
+                </Link>
+                <Link
+                  href="/projects/dsa-tracker"
+                  className="block p-3 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400 transition-all"
+                >
+                  <h4 className="font-bold text-white text-xs mb-1">DSA Tracker Pro & DSA City</h4>
+                  <p className="text-[11px] text-white/70">Monaco Editor, Three.js 3D City</p>
+                </Link>
+                <Link
+                  href="/projects/body-planner"
+                  className="block p-3 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-400 transition-all"
+                >
+                  <h4 className="font-bold text-white text-xs mb-1">Body Planner — Adaptive Fitness</h4>
+                  <p className="text-[11px] text-white/70">ReactFlow DAG, Epley 1RM, Gemini AI</p>
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ========================================================================= */}
+        {/* DESKTOP VIEW (>= 768px): Dual HUD Left & Right Sliding Panels */}
+        {/* ========================================================================= */}
+
         {/* LEFT HUD PANEL: Bio, Experience & Links */}
         <div
           ref={leftPanelRef}
           style={{ opacity: 0, transform: 'translateX(-500px)', pointerEvents: 'none' }}
-          className="w-full md:w-[440px] max-h-full overflow-y-auto bg-[#080d19]/85 border border-cyan-500/30 rounded-3xl p-5 sm:p-6 shadow-[0_0_40px_rgba(0,0,0,0.8)] backdrop-blur-2xl text-white scrollbar-thin scrollbar-thumb-cyan-500/20 flex flex-col justify-between gap-6 pointer-events-auto"
+          className="hidden md:flex w-full md:w-[440px] max-h-full overflow-y-auto bg-[#080d19]/85 border border-cyan-500/30 rounded-3xl p-5 sm:p-6 shadow-[0_0_40px_rgba(0,0,0,0.8)] backdrop-blur-2xl text-white scrollbar-thin scrollbar-thumb-cyan-500/20 flex-col justify-between gap-6 pointer-events-auto"
         >
           <div>
             {/* Header & Badges */}
@@ -276,7 +494,7 @@ export default function UserProfileModal() {
         <div
           ref={rightPanelRef}
           style={{ opacity: 0, transform: 'translateX(500px)', pointerEvents: 'none' }}
-          className="w-full md:w-[450px] max-h-full overflow-y-auto bg-[#080d19]/85 border border-cyan-500/30 rounded-3xl p-5 sm:p-6 shadow-[0_0_40px_rgba(0,0,0,0.8)] backdrop-blur-2xl text-white scrollbar-thin scrollbar-thumb-cyan-500/20 flex flex-col justify-between gap-5 pointer-events-auto"
+          className="hidden md:flex w-full md:w-[450px] max-h-full overflow-y-auto bg-[#080d19]/85 border border-cyan-500/30 rounded-3xl p-5 sm:p-6 shadow-[0_0_40px_rgba(0,0,0,0.8)] backdrop-blur-2xl text-white scrollbar-thin scrollbar-thumb-cyan-500/20 flex-col justify-between gap-5 pointer-events-auto"
         >
           <div>
             {/* Expanded Tech Stack Matrix */}
@@ -371,7 +589,7 @@ export default function UserProfileModal() {
                 {/* Proj 3 */}
                 <Link
                   href="/projects/dsa-city"
-                  className="block p-3.5 rounded-xl bg-white/5 border border-white/10 hover:border-purple-400/60 hover:bg-white/10 transition-all cursor-pointer group"
+                  className="block p-3.5 rounded-xl bg-white/5 border border-purple-400/60 hover:bg-white/10 transition-all cursor-pointer group"
                 >
                   <div className="flex items-center justify-between mb-1">
                     <h3 className="font-bold text-white text-xs group-hover:text-purple-300 transition-colors">🏙️ DSA City 3D</h3>
