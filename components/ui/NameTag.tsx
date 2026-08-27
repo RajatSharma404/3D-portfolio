@@ -58,6 +58,25 @@ export default function NameTag({ onOpenSearch, onOpenResume }: NameTagProps) {
       <div className="flex flex-wrap items-center gap-2 mt-1">
         <button
           onClick={() => {
+            soundManager.playWarp()
+            const setIsTourActive = useSceneStore.getState().setIsTourActive
+            const setTourIndex = useSceneStore.getState().setTourIndex
+            const setIsTourPaused = useSceneStore.getState().setIsTourPaused
+            const setActiveNode = useSceneStore.getState().setActiveNode
+            setTourIndex(0)
+            setIsTourPaused(false)
+            setIsTourActive(true)
+            setActiveNode(null)
+          }}
+          onMouseEnter={() => soundManager.playHover()}
+          aria-label="Start interactive 3D cinematic Earth tour"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-400/60 text-cyan-200 hover:bg-cyan-400 hover:text-slate-950 transition-all text-xs font-semibold shadow-[0_0_15px_rgba(56,189,248,0.35)] cursor-pointer"
+        >
+          <span>🚀 Guided Tour</span>
+        </button>
+
+        <button
+          onClick={() => {
             soundManager.playClick()
             setIsZoomedOut(!isZoomedOut)
           }}
@@ -65,7 +84,7 @@ export default function NameTag({ onOpenSearch, onOpenResume }: NameTagProps) {
           aria-label="Toggle full bio and resume overlay"
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cyan-500/15 border border-cyan-400/40 text-cyan-300 hover:bg-cyan-400 hover:text-black transition-all text-xs font-semibold shadow-[0_0_12px_rgba(56,189,248,0.2)] cursor-pointer"
         >
-          <span>🔍 {isZoomedOut ? 'Zoom In to Globe' : 'Zoom Out for Full Bio'}</span>
+          <span>🔍 {isZoomedOut ? 'Zoom In to Globe' : 'Zoom Out for Bio'}</span>
         </button>
 
         {onOpenSearch && (
@@ -78,7 +97,7 @@ export default function NameTag({ onOpenSearch, onOpenResume }: NameTagProps) {
             aria-label="Open Command Palette Search"
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white hover:text-black transition-all text-xs font-mono font-semibold cursor-pointer"
           >
-            <span>⚡ ⌘K Search</span>
+            <span>⚡ ⌘K</span>
           </button>
         )}
 
