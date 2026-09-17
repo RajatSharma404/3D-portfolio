@@ -3,7 +3,9 @@ import {
   calculateSubsolarPoint,
   getCityLocalTime,
   getCityDaylightStatus,
-  CITY_TIMEZONE_MAP
+  CITY_TIMEZONE_MAP,
+  calculateHaversineDistance,
+  calculateBearing
 } from '@/lib/planetary'
 
 describe('Planetary Astronomical Calculations', () => {
@@ -90,6 +92,33 @@ describe('Planetary Astronomical Calculations', () => {
         expect(info.climate).toBeTruthy()
         expect(info.orbitAltitude).toMatch(/km LEO$/)
       })
+    })
+  })
+
+  describe('calculateHaversineDistance', () => {
+    it('calculates approximately 5,570 km between London (51.5°N, 0.1°W) and New York (40.7°N, 74.0°W)', () => {
+      const dist = calculateHaversineDistance(51.5074, -0.1278, 40.7128, -74.006)
+      expect(dist).toBeGreaterThan(5500)
+      expect(dist).toBeLessThan(5650)
+    })
+
+    it('returns 0 km for identical coordinates', () => {
+      const dist = calculateHaversineDistance(37.7749, -122.4194, 37.7749, -122.4194)
+      expect(dist).toBe(0)
+    })
+  })
+
+  describe('calculateBearing', () => {
+    it('computes due East (90 degrees, E) along the equator', () => {
+      const bearing = calculateBearing(0, 0, 0, 10)
+      expect(bearing.degrees).toBe(90)
+      expect(bearing.compass).toBe('E')
+    })
+
+    it('computes due North (0 degrees, N) along prime meridian', () => {
+      const bearing = calculateBearing(0, 0, 10, 0)
+      expect(bearing.degrees).toBe(0)
+      expect(bearing.compass).toBe('N')
     })
   })
 })
