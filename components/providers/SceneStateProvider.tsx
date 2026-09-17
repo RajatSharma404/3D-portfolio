@@ -4,6 +4,12 @@ import React from 'react'
 import { create } from 'zustand'
 import { OrbitalNode } from '@/lib/nodes'
 
+export interface CameraPOV {
+  lat: number
+  lng: number
+  altitude: number
+}
+
 interface SceneState {
   activeNode: OrbitalNode | null
   setActiveNode: (node: OrbitalNode | null) => void
@@ -19,6 +25,8 @@ interface SceneState {
   setTourIndex: (idx: number) => void
   isTourPaused: boolean
   setIsTourPaused: (v: boolean) => void
+  cameraPov: CameraPOV
+  setCameraPov: (pov: CameraPOV) => void
 }
 
 export const useSceneStore = create<SceneState>()((set) => ({
@@ -35,7 +43,9 @@ export const useSceneStore = create<SceneState>()((set) => ({
   tourIndex: 0,
   setTourIndex: (idx) => set({ tourIndex: idx }),
   isTourPaused: false,
-  setIsTourPaused: (v) => set({ isTourPaused: v })
+  setIsTourPaused: (v) => set({ isTourPaused: v }),
+  cameraPov: { lat: -15, lng: 130, altitude: 2.1 },
+  setCameraPov: (pov) => set({ cameraPov: pov })
 }))
 
 export default function SceneStateProvider({ children }: { children: React.ReactNode }) {
