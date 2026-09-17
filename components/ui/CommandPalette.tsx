@@ -238,6 +238,9 @@ export default function CommandPalette({
     cmd.action()
   }, [])
 
+  const selectedIndexRef = useRef(selectedIndex)
+  selectedIndexRef.current = selectedIndex
+
   // Keyboard navigation inside palette
   useEffect(() => {
     if (!isOpen) return
@@ -253,7 +256,8 @@ export default function CommandPalette({
         setSelectedIndex((prev) => (combinedItems.length > 0 ? (prev - 1 + combinedItems.length) % combinedItems.length : 0))
       } else if (e.key === 'Enter') {
         e.preventDefault()
-        const selected = combinedItems[selectedIndex]
+        const currentIdx = selectedIndexRef.current
+        const selected = combinedItems[currentIdx]
         if (selected) {
           if (selected.type === 'command') {
             handleSelectCommand(selected.item)
@@ -269,7 +273,7 @@ export default function CommandPalette({
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, combinedItems, selectedIndex, handleSelectCommand, handleSelectNode, onClose])
+  }, [isOpen, combinedItems, handleSelectCommand, handleSelectNode, onClose])
 
   if (!isOpen) return null
 
