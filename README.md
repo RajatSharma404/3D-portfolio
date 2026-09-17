@@ -9,6 +9,7 @@
 [![Tailwind CSS 4](https://img.shields.io/badge/Tailwind_CSS-4.3.3-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![GSAP 3](https://img.shields.io/badge/GSAP-3.15-88CE02?style=for-the-badge&logo=greensock&logoColor=white)](https://greensock.com/gsap/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![Vitest](https://img.shields.io/badge/Vitest-43%20Passing-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)](https://vitest.dev/)
 [![Deployed on Vercel](https://img.shields.io/badge/Vercel-Deployment-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://portfolio-chi-self-31.vercel.app/)
 
 <br />
@@ -43,7 +44,7 @@
   - [2. Install Dependencies](#2-install-dependencies)
   - [3. Run the Development Server](#3-run-the-development-server)
   - [4. Production Build & Deployment](#4-production-build--deployment)
-  - [5. Code Quality & Bug Auditing](#5-code-quality--bug-auditing)
+  - [5. Testing, Code Quality & Bug Auditing](#5-testing-code-quality--bug-auditing)
 - [Customization & Extensibility Guide](#-customization--extensibility-guide)
   - [Adding a New Project Node](#adding-a-new-project-node)
   - [Customizing Audio Frequencies](#customizing-audio-frequencies)
@@ -66,6 +67,7 @@ Visitors can interactively spin the Earth, filter projects by continent, engage 
 ### 1. Interactive 3D WebGL Earth Globe
 - **Photorealistic Texture Mapping**: High-definition NASA Blue Marble surface textures combined with topology elevation bump mapping for realistic terrain depth.
 - **Atmospheric Rayleigh Scattering Glow**: Dynamic atmospheric halo rendering with an adaptive color spectrum that responds to hovered and active project node accent colors.
+- **Real-Time Astronomical Day/Night Terminator**: Directional solar lighting calculated mathematically from UTC timestamps (`calculateSubsolarCoordinates` in `lib/planetary.ts`), casting accurate planetary shadows and day/night transitions across hemispheres with ambient starlight.
 - **Smooth Orbit Controls**: 360° rotational freedom with inertial dampening, pitch limits, momentum glide, and an automatic gentle rotation speed (0.75 RPM) that gracefully halts during user interaction.
 - **Great-Circle Orbital Flight Arcs**: 3D animated bezier curves with moving dash strokes connecting continental tech hubs across North America, South America, Europe, Africa, Asia, and Australia.
 - **Pulsing Beacon Wave Rings**: Radar-like beacon rings that radiate outwards from active project coordinates with opacity drop-off curves.
@@ -88,12 +90,15 @@ Visitors can interactively spin the Earth, filter projects by continent, engage 
   - 🇮🇳 **Asia** (DSA City 3D Gamified Metaverse)
   - 🇦🇺 **Australia & Oceania** (Body Planner AI Split Graph)
   - 🇧🇷 **South America** (Countries Quiz Spatial Vector Game)
+- **Spatial Geo-Distance & Orbital Compass HUD**: Real-time floating orbital HUD (`OrbitalCompassHUD.tsx`) calculating spherical distance (in kilometers using the Haversine formula) and directional bearing angle ($0^\circ \to 360^\circ$) from the camera's simulated orbital vantage point to the active project node.
+- **Automated Guided Tour Controls**: Interactive tour player (`TourControls.tsx`) executing scheduled planetary camera flights across all continental nodes with pause/resume, skipped nodes, and high-precision `requestAnimationFrame` progress indicators.
 - **Automatic Camera Flight Interpolation**: Smooth spherical camera transitions using point-of-view spherical trigonometry (latitude, longitude, altitude) with acceleration curves.
 - **Right-Side Radial Dot Navigation**: Vertical navigator dots positioned on the viewport edge featuring staggered entrance animations (GSAP `back.out(1.7)`) with active-state halos.
 
 ### 3. Full-Stack Engineering Case Studies & Project Routes
 - **Dynamic Pre-Rendered Routes (`/projects/[id]`)**: Instantaneous zero-latency routing powered by Next.js App Router and `generateStaticParams`.
 - **Interactive Background 3D Globe**: The 3D globe remains active behind project detail pages. Zooming or scrolling out on the globe smoothly triggers an exit transition returning to the Earth overview.
+- **Client-Side Interactive Sandboxes & Web Worker Stockfish Engine**: Live interactive case study widgets (`ProjectInteractiveDemo.tsx`), including a dedicated background Web Worker (`public/workers/chess-eval-worker.js`) executing Stockfish 17 WASM evaluation at Depth 24 without blocking the main browser thread.
 - **Comprehensive Case Study Layout**:
   - **Executive Overview & Purpose**: Deep narrative breakdown of the problem statement, business value, and engineering objectives.
   - **KPI Metrics Matrix**: Key performance indicators (e.g., *99.2% OCR accuracy*, *60 FPS WebGL render target*, *110ms optimistic mutations*, *Depth 24+ Stockfish workers*).
@@ -140,6 +145,8 @@ Visitors can interactively spin the Earth, filter projects by continent, engage 
 
 ### 8. Architecture & Performance Optimizations
 - **Dynamic Pixel Ratio Capping**: Automatically clamps `devicePixelRatio` to $\le 1.5$ to guarantee smooth 60 FPS rendering on high-DPI (Retina/4K) screens.
+- **Zero Memory Leak WebGL Disposal**: Strict Three.js geometry, material, texture, and animation frame cleanup on unmount preventing WebGL context loss.
+- **Multi-Gate QA & Vitest Test Coverage**: 43 automated unit tests across 9 test suites validating astronomical algorithms, Haversine trigonometry, Web Audio synthesis, and UI HUD components.
 - **Zero-Lag Route Prefetching**: Automatic background prefetching of all project routes via `router.prefetch()` ensures instant navigation with no load spinners.
 - **SEO & Social OpenGraph Engine**: Full Next.js 16 metadata generation including Twitter cards, OpenGraph previews, and `application/ld+json` Person Schema structured data.
 - **Pure CSS Off-Screen Sliders**: Hardware-accelerated CSS keyframe transforms (`translate3d`) with `will-change` optimizations for 60 FPS transitions.
@@ -196,6 +203,7 @@ Visitors can interactively spin the Earth, filter projects by continent, engage 
 | `react-globe.gl` | `^2.38.0` | 3D Globe visualization component layer |
 | `zustand` | `^5.0.14` | Global lightweight reactive scene state management |
 | `gsap` | `^3.15.0` | Timeline-based entrance, exit, and HUD sliding animations |
+| `vitest` | `^5.0.0` | High-speed unit testing suite with jsdom & testing-library |
 | `@tailwindcss/postcss` & `tailwindcss` | `^4.3.3` | Next-generation utility-first styling engine |
 | `@fontsource/space-grotesk` | `^5.3.0` | Self-hosted futuristic geometric sans-serif font |
 | `@fontsource/space-mono` | `^5.3.0` | Monospace font for telemetry, metrics, and code specs |
@@ -207,6 +215,16 @@ Visitors can interactively spin the Earth, filter projects by continent, engage 
 
 ```
 3D-Portfolio/
+├── .agents/skills/                       # Antigravity agentic skill runbooks
+│   ├── add-project-node/                 # Scaffold project nodes & case studies
+│   ├── commit/                           # Atomic per-file commit & push protocol
+│   ├── improvement/                      # Senior code review & structural report
+│   ├── interactive-demo-builder/         # Case study interactive simulation builder
+│   ├── qa-audit-test/                    # Multi-gate QA, lint, audit & Vitest runner
+│   ├── skill-evolver/                    # Autonomous skill self-updating engine
+│   ├── sound-fx-synthesis/               # Web Audio API sound designer
+│   ├── update/                           # Documentation & README sync engine
+│   └── webgl-scene-optimizer/            # Three.js 60 FPS performance & memory cleanup
 ├── app/
 │   ├── globals.css                       # Global design tokens, keyframes, scrollbar & glassmorphism
 │   ├── layout.tsx                        # Root layout, fonts, JSON-LD Schema, OpenGraph metadata
@@ -219,8 +237,7 @@ Visitors can interactively spin the Earth, filter projects by continent, engage 
 │   ├── providers/
 │   │   └── SceneStateProvider.tsx        # Zustand global scene state (activeNode, isZoomedOut)
 │   ├── scene/
-│   │   ├── InteractiveGlobe.tsx          # Primary WebGL 3D Earth canvas & event orchestrator
-│   │   ├── NodeLabel.tsx                 # 3D label rendering helper
+│   │   ├── InteractiveGlobe.tsx          # WebGL 3D Earth canvas, day/night solar lighting & cleanup
 │   │   ├── ProjectBackgroundGlobe.tsx    # Secondary background 3D globe for case study pages
 │   │   ├── ProjectBackgroundGlobeWrapper.tsx # Client boundary wrapper for background globe
 │   │   └── ProjectDetailView.tsx         # Comprehensive case study detail view container
@@ -228,29 +245,42 @@ Visitors can interactively spin the Earth, filter projects by continent, engage 
 │       ├── CommandPalette.tsx            # Global ⌘K fuzzy search modal
 │       ├── ContactLink.tsx               # Bottom-right quick contact trigger
 │       ├── ContinentBar.tsx              # Bottom floating continent navigation dock
+│       ├── CustomCursor.tsx              # Responsive custom neon cursor with scale physics
+│       ├── DeveloperStatsHUD.tsx          # Developer metrics, certifications, and system status HUD
 │       ├── LoadingScreen.tsx             # Entry load screen animation
 │       ├── NameTag.tsx                   # Top-left identity badge & HUD toggles
 │       ├── NavDots.tsx                   # Right-side vertical navigation dots
-│       ├── NodePanel.tsx                 # Project summary drawer
+│       ├── OrbitalCompassHUD.tsx         # Real-time Haversine distance & bearing telemetry HUD
+│       ├── ProjectInteractiveDemo.tsx    # Client-side interactive sandboxes & Web Worker Stockfish
 │       ├── ProjectMediaGallery.tsx       # Screenshot & architecture blueprint gallery with lightbox
 │       ├── ResumeModal.tsx               # Resume viewer with PDF download
 │       ├── SoundToggle.tsx               # Top-right Web Audio synthesizer toggle button
+│       ├── TourControls.tsx              # Automated orbital camera tour controls with progress bar
 │       └── UserProfileModal.tsx          # Split-screen developer bio & career history HUD
 ├── lib/
 │   ├── nodes.ts                          # Central dataset of projects, orbital coordinates, and arcs
+│   ├── planetary.ts                      # Subsolar calculations, Haversine distance, and spherical bearing
 │   └── sound.ts                          # Zero-dependency Web Audio API oscillator sound manager
 ├── public/
-│   └── textures/
-│       ├── earth-blue-marble.jpg         # High-resolution NASA Blue Marble diffuse texture
-│       ├── earth-topology.png            # Elevation bump & topology displacement map
-│       └── night-sky.png                 # Background stellar constellation skybox
+│   ├── textures/
+│   │   ├── earth-blue-marble.jpg         # High-resolution NASA Blue Marble diffuse texture
+│   │   ├── earth-topology.png            # Elevation bump & topology displacement map
+│   │   └── night-sky.png                 # Background stellar constellation skybox
+│   └── workers/
+│       └── chess-eval-worker.js          # Background Web Worker for Stockfish depth 24 evaluation
 ├── scripts/
 │   ├── bug-checker.js                    # Automated code quality, React hooks & data audit script
 │   └── redundant-cleaner.js              # Orphan component and data duplication audit script
+├── tests/
+│   ├── components/                       # React component testing (OrbitalCompassHUD, etc.)
+│   ├── lib/                              # Planetary calculations, sound engine, and nodes tests
+│   └── setup.ts                          # Vitest & jsdom setup configuration
+├── AGENTS.md                             # Antigravity agent directives & slash command mapping
 ├── LICENSE                               # MIT License
 ├── package.json                          # Project dependencies, scripts, and metadata
 ├── postcss.config.js                     # PostCSS configuration for Tailwind CSS v4
-└── tsconfig.json                         # TypeScript compiler configuration
+├── tsconfig.json                         # TypeScript compiler configuration
+└── vitest.config.ts                      # Vitest configuration with React plugin
 ```
 
 ---
@@ -313,11 +343,20 @@ The easiest way to deploy this Next.js application is through the [Vercel Platfo
 2. Import the project into the [Vercel Dashboard](https://vercel.com/new).
 3. Vercel automatically detects Next.js — click **Deploy**.
 
-### 5. Code Quality & Bug Auditing
+### 5. Testing, Code Quality & Bug Auditing
 
-The repository includes custom built-in auditing scripts to verify data schema integrity, hook conventions, and prune orphan files:
+The repository enforces strict multi-gate quality standards via automated test suites, TypeScript strict mode, and custom AST auditing scripts:
 
 ```bash
+# Run Vitest test runner (43 passing unit tests across 9 test suites)
+npm test
+
+# Run Vitest in interactive watch mode
+npm run test:watch
+
+# Run TypeScript static type check (0 errors)
+npx tsc --noEmit
+
 # Run comprehensive bug & code quality checker
 npm run audit:bugs
 
