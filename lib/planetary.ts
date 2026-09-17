@@ -130,3 +130,54 @@ export function getCityDaylightStatus(timezone: string, date: Date = new Date())
     return { status: 'Daylight', icon: '☀️', label: 'Daylight Phase' }
   }
 }
+
+/**
+ * Calculates Great-Circle spherical distance using the Haversine formula (in kilometers).
+ */
+export function calculateHaversineDistance(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number
+): number {
+  const R = 6371 // Mean Earth radius in km
+  const toRad = (d: number) => (d * Math.PI) / 180
+
+  const dLat = toRad(lat2 - lat1)
+  const dLng = toRad(lng2 - lng1)
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) * Math.sin(dLng / 2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+
+  return Math.round(R * c)
+}
+
+/**
+ * Calculates the forward azimuth / initial bearing from point 1 to point 2 (0-360 degrees).
+ */
+export function calculateBearing(
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number
+): { degrees: number; compass: string } {
+  const toRad = (d: number) => (d * Math.PI) / 180
+  const toDeg = (r: number) => (r * 180) / Math.PI
+
+  const phi1 = toRad(lat1)
+  const phi2 = toRad(lat2)
+  const deltaLambda = toRad(lng2 - lng1)
+
+  const y = Math.sin(deltaLambda) * Math.cos(phi2)
+  const x = Math.cos(phi1) * Math.sin(phi2) - Math.sin(phi1) * Math.cos(phi2) * Math.cos(deltaLambda)
+  const deg = (toDeg(Math.atan2(y, x)) + 360) % 360
+
+  const COMPASS_DIRECTIONS = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW']
+  const index = Math.round(deg / 22.5) % 16
+
+  return {
+    degrees: Math.round(deg),
+    compass: COMPASS_DIRECTIONS[index]
+  }
+}
