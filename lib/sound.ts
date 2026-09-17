@@ -27,7 +27,9 @@ class SoundManager {
       }
     }
     if (this.ctx && this.ctx.state === 'suspended') {
-      this.ctx.resume()
+      this.ctx.resume().catch(() => {
+        // Safe fallback: AudioContext remains suspended until explicit user interaction
+      })
     }
     return this.ctx
   }
