@@ -135,14 +135,15 @@ export default function InteractiveGlobe() {
       starFieldRef.current = starField
 
       // 2. Real-World Astronomical Planetary Sun Positioning (Subsolar Vector)
-      const subsolar = calculateSubsolarPoint(new Date(), 280)
-      const sunLight = new THREE.DirectionalLight(0xffffff, 2.2)
+      const subsolar = calculateSubsolarPoint(new Date(), 320)
+      const sunLight = new THREE.DirectionalLight(0xfffaf0, 2.85)
       sunLight.position.set(subsolar.x, subsolar.y, subsolar.z)
       sunLight.name = 'portfolio-sunlight'
       scene.add(sunLight)
       sunLightRef.current = sunLight
 
-      const ambientLight = new THREE.AmbientLight(0x1e293b, 0.9)
+      // Deep space ambient with subtle indigo fill creating an authentic Day/Night planetary terminator
+      const ambientLight = new THREE.AmbientLight(0x0a1128, 0.38)
       ambientLight.name = 'portfolio-ambient'
       scene.add(ambientLight)
 
@@ -164,6 +165,20 @@ export default function InteractiveGlobe() {
 
     return () => {
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
+      if (starFieldRef.current) {
+        scene?.remove(starFieldRef.current)
+        starFieldRef.current.geometry.dispose()
+        if (Array.isArray(starFieldRef.current.material)) {
+          starFieldRef.current.material.forEach((m) => m.dispose())
+        } else {
+          starFieldRef.current.material.dispose()
+        }
+        starFieldRef.current = null
+      }
+      if (sunLightRef.current) {
+        scene?.remove(sunLightRef.current)
+        sunLightRef.current = null
+      }
     }
   }, [])
 
@@ -180,6 +195,13 @@ export default function InteractiveGlobe() {
 
       const pov = globeRef.current.pointOfView()
       if (!pov || typeof pov.altitude !== 'number') return
+
+      // Broadcast camera POV to telemetry subscribers (OrbitalCompassHUD)
+      useSceneStore.getState().setCameraPov({
+        lat: Number(pov.lat.toFixed(2)),
+        lng: Number(pov.lng.toFixed(2)),
+        altitude: Number(pov.altitude.toFixed(2))
+      })
 
       // Zoom-in auto-redirection: trigger when camera altitude < 1.45
       if (pov.altitude < 1.45) {
@@ -539,9 +561,11 @@ export default function InteractiveGlobe() {
           }
 
           const triggerSelect = (e: Event) => {
-            if (e instanceof MouseEvent) {
-              const dx = Math.abs(e.clientX - startX)
-              const dy = Math.abs(e.clientY - startY)
+            const clientX = 'clientX' in e ? (e as MouseEvent).clientX : (e as TouchEvent).changedTouches?.[0]?.clientX
+            const clientY = 'clientY' in e ? (e as MouseEvent).clientY : (e as TouchEvent).changedTouches?.[0]?.clientY
+            if (clientX !== undefined && clientY !== undefined) {
+              const dx = Math.abs(clientX - startX)
+              const dy = Math.abs(clientY - startY)
               if (dx > 6 || dy > 6) return // User was dragging the globe!
             }
             e.preventDefault()
@@ -559,9 +583,7 @@ export default function InteractiveGlobe() {
             router.push(`/projects/${node.id}`)
           }
 
-          el.ondblclick = triggerSelect
           el.onclick = triggerSelect
-          el.ontouchend = triggerSelect
 
           el.onkeydown = (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
