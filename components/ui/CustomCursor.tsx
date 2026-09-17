@@ -8,6 +8,7 @@ export default function CustomCursor() {
   const [isHovered, setIsHovered] = useState(false)
   const [isClicked, setIsClicked] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
+  const isVisibleRef = useRef(false)
 
   const mousePos = useRef({ x: -100, y: -100 })
   const followerPos = useRef({ x: -100, y: -100 })
@@ -31,7 +32,10 @@ export default function CustomCursor() {
 
     const handleMouseMove = (e: MouseEvent) => {
       mousePos.current = { x: e.clientX, y: e.clientY }
-      if (!isVisible) setIsVisible(true)
+      if (!isVisibleRef.current) {
+        isVisibleRef.current = true
+        setIsVisible(true)
+      }
 
       const target = e.target as HTMLElement | null
       if (target) {
@@ -51,8 +55,14 @@ export default function CustomCursor() {
 
     const handleMouseDown = () => setIsClicked(true)
     const handleMouseUp = () => setIsClicked(false)
-    const handleMouseLeave = () => setIsVisible(false)
-    const handleMouseEnter = () => setIsVisible(true)
+    const handleMouseLeave = () => {
+      isVisibleRef.current = false
+      setIsVisible(false)
+    }
+    const handleMouseEnter = () => {
+      isVisibleRef.current = true
+      setIsVisible(true)
+    }
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true })
     window.addEventListener('mousedown', handleMouseDown)
@@ -81,7 +91,7 @@ export default function CustomCursor() {
       document.body.removeEventListener('mouseenter', handleMouseEnter)
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
-  }, [isPointerDevice, isVisible])
+  }, [isPointerDevice])
 
   if (!isPointerDevice) return null
 
