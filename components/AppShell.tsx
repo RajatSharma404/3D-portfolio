@@ -2,7 +2,7 @@
 
 import { Suspense } from 'react'
 import dynamic from 'next/dynamic'
-import SceneStateProvider from '@/components/providers/SceneStateProvider'
+import SceneStateProvider, { useSceneStore } from '@/components/providers/SceneStateProvider'
 import NameTag from '@/components/ui/NameTag'
 import NavDots from '@/components/ui/NavDots'
 import ContinentBar from '@/components/ui/ContinentBar'
@@ -23,6 +23,7 @@ const InteractiveGlobe = dynamic(
 import TourControls from '@/components/ui/TourControls'
 import CustomCursor from '@/components/ui/CustomCursor'
 import DeveloperStatsHUD from '@/components/ui/DeveloperStatsHUD'
+import OrbitalCompassHUD from '@/components/ui/OrbitalCompassHUD'
 
 export default function AppShell() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -48,6 +49,7 @@ export default function AppShell() {
       <SceneStateProvider>
         <CustomCursor />
         <InteractiveGlobe />
+        <OrbitalCompassHUD />
         <NameTag
           onOpenSearch={() => setIsSearchOpen(true)}
           onOpenResume={() => setIsResumeOpen(true)}
@@ -57,6 +59,7 @@ export default function AppShell() {
         <ContactLink />
         <DeveloperStatsHUD
           onOpenResume={() => setIsResumeOpen(true)}
+          onOpenBio={() => useSceneStore.getState().setIsZoomedOut(true)}
         />
         <UserProfileModal />
         <SoundToggle />
@@ -64,6 +67,7 @@ export default function AppShell() {
           isOpen={isSearchOpen}
           onClose={() => setIsSearchOpen(false)}
           onOpenResume={() => setIsResumeOpen(true)}
+          onOpenBio={() => useSceneStore.getState().setIsZoomedOut(true)}
         />
         <ResumeModal isOpen={isResumeOpen} onClose={() => setIsResumeOpen(false)} />
         <TourControls />
