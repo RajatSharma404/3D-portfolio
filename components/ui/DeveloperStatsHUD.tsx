@@ -40,6 +40,20 @@ export default function DeveloperStatsHUD({ onOpenBio, onOpenResume }: Developer
     return () => clearInterval(timer)
   }, [])
 
+  // Listen for Escape key to close telemetry modal
+  useEffect(() => {
+    if (!isOpenModal) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        soundManager.playClick()
+        setIsOpenModal(false)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isOpenModal])
+
   const current = METRICS_TICKER[metricIndex]
 
   return (
