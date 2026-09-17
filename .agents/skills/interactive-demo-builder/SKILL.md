@@ -68,6 +68,20 @@ case 'my-new-project':
   return <MyNewProjectDemo accentColor={accentColor} />
 ```
 
+### Step 4: Background Web Worker Offloading (Optional for Heavy Compute)
+For intensive algorithms (e.g. chess engines, physics solvers, tokenizers), place a worker script in `public/workers/<engine>-worker.js`:
+```typescript
+useEffect(() => {
+  if (typeof window === 'undefined') return
+  const worker = new Worker('/workers/chess-eval-worker.js')
+  worker.onmessage = (e) => {
+    // Process depth or solver data without main-thread blocking
+  }
+  worker.postMessage({ targetDepth: 24 })
+  return () => worker.terminate()
+}, [])
+```
+
 ---
 
 ## 🧪 Verification
