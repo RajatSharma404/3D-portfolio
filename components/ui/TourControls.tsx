@@ -22,10 +22,11 @@ export default function TourControls() {
   const setIsTourPaused = useSceneStore((state) => state.setIsTourPaused)
   const setActiveNode = useSceneStore((state) => state.setActiveNode)
 
-  const [progress, setProgress] = useState(0)
+  const progressBarRef = useRef<HTMLDivElement>(null)
+  const countdownRef = useRef<HTMLSpanElement>(null)
   const startTimeRef = useRef<number>(Date.now())
   const elapsedBeforePauseRef = useRef<number>(0)
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const rafRef = useRef<number | null>(null)
 
   const currentNode = NODES[tourIndex] || NODES[0]
   const accentColor = currentNode.accentColor || '#38bdf8'
@@ -36,7 +37,8 @@ export default function TourControls() {
     const nextIdx = (tourIndex + 1) % NODES.length
     setTourIndex(nextIdx)
     setActiveNode(NODES[nextIdx])
-    setProgress(0)
+    if (progressBarRef.current) progressBarRef.current.style.width = '0%'
+    if (countdownRef.current) countdownRef.current.textContent = `${Math.ceil(STEP_DURATION_MS / 1000)}s`
     startTimeRef.current = Date.now()
     elapsedBeforePauseRef.current = 0
   }, [tourIndex, setTourIndex, setActiveNode])
@@ -47,7 +49,8 @@ export default function TourControls() {
     const prevIdx = (tourIndex - 1 + NODES.length) % NODES.length
     setTourIndex(prevIdx)
     setActiveNode(NODES[prevIdx])
-    setProgress(0)
+    if (progressBarRef.current) progressBarRef.current.style.width = '0%'
+    if (countdownRef.current) countdownRef.current.textContent = `${Math.ceil(STEP_DURATION_MS / 1000)}s`
     startTimeRef.current = Date.now()
     elapsedBeforePauseRef.current = 0
   }, [tourIndex, setTourIndex, setActiveNode])
@@ -56,7 +59,8 @@ export default function TourControls() {
     soundManager.playClick()
     setIsTourActive(false)
     setIsTourPaused(false)
-    setProgress(0)
+    if (progressBarRef.current) progressBarRef.current.style.width = '0%'
+    if (countdownRef.current) countdownRef.current.textContent = `${Math.ceil(STEP_DURATION_MS / 1000)}s`
     elapsedBeforePauseRef.current = 0
   }, [setIsTourActive, setIsTourPaused])
 
@@ -73,27 +77,39 @@ export default function TourControls() {
     }
   }, [isTourPaused, setIsTourPaused])
 
-  // Timer loop for auto progression
+  // Smooth 60 FPS animation loop without React component re-render churn
   useEffect(() => {
     if (!isTourActive || isTourPaused) {
-      if (timerRef.current) clearInterval(timerRef.current)
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
       return
     }
 
     startTimeRef.current = Date.now()
 
-    timerRef.current = setInterval(() => {
+    const updateLoop = () => {
       const currentElapsed = elapsedBeforePauseRef.current + (Date.now() - startTimeRef.current)
       const currentProgress = Math.min(100, (currentElapsed / STEP_DURATION_MS) * 100)
-      setProgress(currentProgress)
+
+      if (progressBarRef.current) {
+        progressBarRef.current.style.width = `${currentProgress}%`
+      }
+
+      const remaining = Math.max(0, Math.ceil((STEP_DURATION_MS - currentElapsed) / 1000))
+      if (countdownRef.current) {
+        countdownRef.current.textContent = `${remaining}s`
+      }
 
       if (currentElapsed >= STEP_DURATION_MS) {
         handleNext()
+      } else {
+        rafRef.current = requestAnimationFrame(updateLoop)
       }
-    }, 50)
+    }
+
+    rafRef.current = requestAnimationFrame(updateLoop)
 
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current)
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
   }, [isTourActive, isTourPaused, tourIndex, handleNext])
 
@@ -159,9 +175,10 @@ export default function TourControls() {
           {/* Top Progress Line */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-white/10">
             <div
-              className="h-full transition-all duration-75"
+              ref={progressBarRef}
+              className="h-full"
               style={{
-                width: `${progress}%`,
+                width: '0%',
                 backgroundColor: accentColor,
                 boxShadow: `0 0 10px ${accentColor}`
               }}
@@ -199,7 +216,7 @@ export default function TourControls() {
             </div>
 
             <div className="flex items-center gap-1.5 font-mono text-[10px] text-white/40">
-              <span>{Math.ceil((STEP_DURATION_MS - (progress / 100) * STEP_DURATION_MS) / 1000)}s</span>
+              <span ref={countdownRef}>{Math.ceil(STEP_DURATION_MS / 1000)}s</span>
               <span>remaining</span>
             </div>
           </div>
