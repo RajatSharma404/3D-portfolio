@@ -16,6 +16,7 @@ export default function ProjectInteractiveDemo({ projectId, accentColor = '#38bd
       return <CountriesQuizDemo accentColor={accentColor} />
     case 'mastermind':
       return <MasterMindDemo accentColor={accentColor} />
+    case 'dsa-tracker-pro':
     case 'dsa-tracker':
       return <DsaTrackerDemo accentColor={accentColor} />
     case 'dsa-city':
@@ -272,87 +273,196 @@ function CountriesQuizDemo({ accentColor }: { accentColor: string }) {
   )
 }
 
-// 3. MASTERMIND: Interactive Chess Position & Eval Bar Demo
+// 3. MASTERMIND: Interactive Chess Position & Web Worker Eval Bar Demo
 function MasterMindDemo({ accentColor }: { accentColor: string }) {
-  const MOVES = [
-    { move: '1. e4', eval: '+0.25', commentary: 'King pawn opening establishing central space control.' },
-    { move: '1... c5', eval: '+0.30', commentary: 'Sicilian Defense — fighting for asymmetrical counter-play.' },
-    { move: '2. Nf3', eval: '+0.35', commentary: 'Natural development preparing central d4 push.' },
-    { move: '2... d6', eval: '+0.32', commentary: 'Guards e5 square and opens diagonal for light-squared bishop.' },
-    { move: '3. d4', eval: '+0.55', commentary: 'Open Sicilian strike fighting for immediate center dominance.' },
-    { move: '3... cxd4', eval: '+0.50', commentary: 'Black captures center pawn; opens c-file for rook pressure.' },
-    { move: '4. Nxd4', eval: '+0.65', commentary: 'Stockfish 17 Depth 24: White maintains +0.65 advantage with strong knight mobility.' }
+  const POSITIONS = [
+    { key: 'open-sicilian', label: 'Sicilian Najdorf', sub: 'Sharp Tactical Defense' },
+    { key: 'queens-gambit', label: "Queen's Gambit", sub: 'Classical Positional Battle' },
+    { key: 'kings-indian', label: "King's Indian", sub: 'Opposite-Side Pawn Storm' },
+    { key: 'endgame-rook', label: 'Lucena Endgame', sub: 'Bridge Building Technique' }
   ]
 
-  const [step, setStep] = useState(0)
+  const [activePosKey, setActivePosKey] = useState('open-sicilian')
+  const [evalData, setEvalData] = useState<{
+    depth: number
+    targetDepth: number
+    evalStr: string
+    score: number
+    winChance: number
+    nodes: number
+    nps: number
+    pv: string
+    bestMove: string
+    theme: string
+    isDone: boolean
+  }>({
+    depth: 4,
+    targetDepth: 24,
+    evalStr: '+0.35',
+    score: 0.35,
+    winChance: 55,
+    nodes: 12400,
+    nps: 950000,
+    pv: '6... a6 7. Be3 e5 8. Nb3 Be6 9. f3 Be7',
+    bestMove: 'a6',
+    theme: 'Dynamic center tension with sharp asymmetrical counter-attacking chances for Black.',
+    isDone: false
+  })
 
-  const current = MOVES[step]
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    let worker: Worker | null = null
+    try {
+      worker = new Worker('/workers/chess-eval-worker.js')
+
+      worker.onmessage = (e) => {
+        const data = e.data
+        if (data.type === 'depth-progress') {
+          setEvalData({
+            depth: data.depth,
+            targetDepth: data.targetDepth,
+            evalStr: data.evalStr,
+            score: data.score,
+            winChance: data.winChance,
+            nodes: data.nodes,
+            nps: data.nps,
+            pv: data.pv,
+            bestMove: data.bestMove,
+            theme: data.theme,
+            isDone: false
+          })
+        } else if (data.type === 'done') {
+          setEvalData({
+            depth: data.depth,
+            targetDepth: data.depth,
+            evalStr: data.evalStr,
+            score: data.score,
+            winChance: data.winChance,
+            nodes: data.nodes,
+            nps: data.nps,
+            pv: data.pv,
+            bestMove: data.bestMove,
+            theme: data.theme,
+            isDone: true
+          })
+        }
+      }
+
+      worker.postMessage({ positionKey: activePosKey, targetDepth: 24 })
+    } catch {
+      // Fallback if Web Workers are restricted in environment
+    }
+
+    return () => {
+      if (worker) worker.terminate()
+    }
+  }, [activePosKey])
+
+  const handleSelectPosition = (key: string) => {
+    soundManager.playClick()
+    soundManager.playWarp()
+    setActivePosKey(key)
+  }
+
+  // Calculate eval bar fill percentage (clamped between 5% and 95%)
+  const evalPercent = Math.min(95, Math.max(5, 50 + evalData.score * 12))
 
   return (
     <div className="space-y-4 select-none font-mono text-xs">
-      <div className="flex items-center justify-between">
+      {/* Engine Status Header */}
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
-          <span className="font-bold text-indigo-300">Stockfish 17 WASM & Gemini Coach</span>
+          <span
+            className={`w-2 h-2 rounded-full ${
+              evalData.isDone ? 'bg-emerald-400' : 'bg-indigo-400 animate-ping'
+            }`}
+          />
+          <span className="font-bold text-indigo-300">
+            Stockfish 17 WASM Web Worker + Gemini Coach
+          </span>
         </div>
-        <span className="text-[10px] text-white/40">Engine Depth: 24 Nodes</span>
+        <div className="flex items-center gap-2 text-[10px] text-white/50">
+          <span className="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">
+            {evalData.isDone ? '✓ DEPTH 24 CONVERGED' : `COMPUTING DEPTH ${evalData.depth}/24`}
+          </span>
+          <span>{(evalData.nps / 1000000).toFixed(2)}M NPS</span>
+        </div>
       </div>
 
-      {/* Stepper Timeline & Eval Bar */}
+      {/* Position Selector Tabs */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        {POSITIONS.map((pos) => {
+          const isActive = pos.key === activePosKey
+          return (
+            <button
+              key={pos.key}
+              onClick={() => handleSelectPosition(pos.key)}
+              className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                isActive
+                  ? 'bg-indigo-500/20 border-indigo-400 text-white shadow-[0_0_15px_rgba(99,102,241,0.4)]'
+                  : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              <span className="font-bold block truncate">{pos.label}</span>
+              <span className="text-[9px] text-white/40 block truncate">{pos.sub}</span>
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Interactive Engine Board Telemetry & Eval Bar */}
       <div className="p-5 rounded-2xl bg-black/60 border border-indigo-500/30 space-y-4">
-        {/* Evaluation Bar */}
-        <div className="space-y-1">
-          <div className="flex justify-between text-[11px]">
-            <span className="text-white font-bold">White Advantage: {current.eval}</span>
-            <span className="text-white/40">Move {step + 1} of {MOVES.length}</span>
-          </div>
-          <div className="w-full h-3 rounded-full bg-slate-800 overflow-hidden flex">
-            <div
-              className="h-full bg-cyan-400 transition-all duration-300 shadow-[0_0_10px_#38bdf8]"
-              style={{ width: `${50 + (parseFloat(current.eval) || 0) * 25}%` }}
-            />
-            <div className="h-full bg-slate-700 flex-1" />
-          </div>
-        </div>
-
-        {/* Current Move Spotlight */}
-        <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="px-2.5 py-1 rounded bg-indigo-500/20 text-indigo-300 font-bold text-sm">
-              {current.move}
+        {/* Dynamic Dual-Color Evaluation Bar */}
+        <div className="space-y-1.5">
+          <div className="flex justify-between text-[11px] items-baseline">
+            <span className="text-white font-bold flex items-center gap-1.5">
+              <span>Engine Eval:</span>
+              <span className="text-indigo-300 text-sm font-extrabold">{evalData.evalStr}</span>
+              <span className="text-[10px] text-white/40">({evalData.winChance}% White Win)</span>
             </span>
-            <span className="text-white/80 text-xs font-sans">{current.commentary}</span>
+            <span className="text-[10px] text-white/40">
+              Analyzed {evalData.nodes.toLocaleString()} Nodes
+            </span>
+          </div>
+
+          <div className="w-full h-3.5 rounded-full bg-[#0f172a] border border-white/10 overflow-hidden flex p-0.5">
+            <div
+              className="h-full bg-gradient-to-r from-cyan-400 to-indigo-400 rounded-l-full transition-all duration-300 shadow-[0_0_12px_rgba(56,189,248,0.6)]"
+              style={{ width: `${evalPercent}%` }}
+            />
+            <div className="h-full bg-slate-900/80 rounded-r-full flex-1" />
           </div>
         </div>
 
-        {/* Stepper Buttons */}
-        <div className="flex items-center justify-between pt-2 border-t border-white/10">
-          <div className="flex gap-2">
-            <button
-              onClick={() => {
-                soundManager.playClick()
-                setStep((s) => Math.max(0, s - 1))
-              }}
-              disabled={step === 0}
-              aria-label="Previous chess move"
-              className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white disabled:opacity-30 cursor-pointer"
-            >
-              ◀ Prev Move
-            </button>
-            <button
-              onClick={() => {
-                soundManager.playWarp()
-                setStep((s) => Math.min(MOVES.length - 1, s + 1))
-              }}
-              disabled={step === MOVES.length - 1}
-              aria-label="Next chess move"
-              className="px-3 py-1.5 rounded-lg bg-indigo-500/30 hover:bg-indigo-500/50 text-indigo-200 border border-indigo-400/40 disabled:opacity-30 cursor-pointer font-bold"
-            >
-              Next Move ▶
-            </button>
+        {/* Engine Principal Variation & Best Move */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="p-3 rounded-xl bg-white/5 border border-white/10 col-span-1">
+            <span className="text-[9px] text-white/40 uppercase block">Engine Best Move</span>
+            <span className="text-lg font-bold text-cyan-300 tracking-wide font-mono">
+              {evalData.bestMove}
+            </span>
           </div>
 
-          <span className="text-[10px] text-white/40">Opening: Sicilian Defense, Najdorf Variation</span>
+          <div className="p-3 rounded-xl bg-white/5 border border-white/10 col-span-1 sm:col-span-2">
+            <span className="text-[9px] text-white/40 uppercase block">Principal Variation (PV)</span>
+            <span className="text-xs text-indigo-200 font-mono block truncate mt-0.5">
+              {evalData.pv}
+            </span>
+          </div>
+        </div>
+
+        {/* Gemini Grandmaster Natural Language Coach */}
+        <div className="p-3.5 rounded-xl bg-indigo-950/30 border border-indigo-500/20 text-indigo-100 flex items-start gap-2.5">
+          <span className="text-base shrink-0">♟️</span>
+          <div>
+            <span className="text-[10px] font-bold text-indigo-300 uppercase tracking-wider block">
+              Gemini Grandmaster Positional Coach
+            </span>
+            <p className="text-xs font-sans text-white/80 leading-relaxed mt-0.5">
+              {evalData.theme}
+            </p>
+          </div>
         </div>
       </div>
     </div>
